@@ -1,10 +1,12 @@
-<?php
+<?php 
+
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 
-class DatabaseSeeder extends Seeder
+class AdminSeeder extends Seeder
 {
     public function run()
     {
@@ -12,8 +14,7 @@ class DatabaseSeeder extends Seeder
             ['username' => 'admin'],
             [
                 'name' => 'Administrator',
-                'username' => 'admin',  // Ensure this column exists in `admins` table
-                'password' => Hash::make('admin'),
+                'password' => Hash::make('admin'), // Hashed password
             ]
         );
     }

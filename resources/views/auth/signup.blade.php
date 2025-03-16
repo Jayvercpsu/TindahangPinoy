@@ -23,6 +23,7 @@
             <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a>
             <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a>
         </div>
+
         <div class="card">
             <div class="card-header text-center">Create an Account</div>
             <div class="card-body">
@@ -52,7 +53,6 @@
                         </small>
                     </div>
 
-
                     <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Confirm Password</label>
                         <div class="input-group">
@@ -61,6 +61,9 @@
                                 <i class="fa fa-eye"></i>
                             </button>
                         </div>
+                        <small id="confirmPasswordError" class="text-danger" style="display:none;">
+                            Passwords do not match.
+                        </small>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Sign Up</button>
@@ -79,13 +82,9 @@
     <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center p-lg-4">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle class="path circle" fill="none" stroke="#198754" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-                    <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5" />
-                </svg>
                 <h4 class="text-success mt-3">Success!</h4>
-                <p class="mt-3">You have successfully registered.</p>
-                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal">Ok</button>
+                <p class="mt-3">Your account has been created. Please log in.</p>
+                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal" onclick="redirectToLogin()">Ok</button>
             </div>
         </div>
     </div>
@@ -96,13 +95,8 @@
     <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center p-lg-4">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle class="path circle" fill="none" stroke="#db3646" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-                    <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
-                    <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
-                </svg>
                 <h4 class="text-danger mt-3">Error!</h4>
-                <p class="mt-3">This email is already registered.</p>
+                <p class="mt-3" id="errorMessage">An error occurred.</p>
                 <button type="button" class="btn btn-sm mt-3 btn-danger" data-bs-dismiss="modal">Ok</button>
             </div>
         </div>
@@ -115,6 +109,10 @@
     function togglePassword(id) {
         let input = document.getElementById(id);
         input.type = input.type === "password" ? "text" : "password";
+    }
+
+    function redirectToLogin() {
+        window.location.href = "{{ route('login') }}";
     }
 
     // Password validation on keyup
@@ -132,6 +130,21 @@
         }
     });
 
+    // Check if passwords match
+    document.getElementById('password_confirmation').addEventListener('keyup', function() {
+        let password = document.getElementById('password').value;
+        let confirmPassword = this.value;
+        let errorMessage = document.getElementById('confirmPasswordError');
+
+        if (password !== confirmPassword) {
+            errorMessage.style.display = "block";
+            this.setCustomValidity("Passwords do not match.");
+        } else {
+            errorMessage.style.display = "none";
+            this.setCustomValidity("");
+        }
+    });
+
     // Show success modal if sign-up is successful
     @if(session('success'))
         document.addEventListener("DOMContentLoaded", function () {
@@ -141,12 +154,21 @@
     @endif
 
     // Show error modal if email or password errors exist
-    @if($errors->has('email') || $errors->has('password') || session('error'))
+    @if($errors->has('email') || $errors->has('password') || $errors->has('password_confirmation') || session('error'))
         document.addEventListener("DOMContentLoaded", function () {
             var errorModal = new bootstrap.Modal(document.getElementById('statusErrorsModal'));
+            var errorMessage = document.getElementById('errorMessage');
+
+            @if($errors->has('email'))
+                errorMessage.innerText = "This email is already registered.";
+            @elseif($errors->has('password_confirmation'))
+                errorMessage.innerText = "Passwords do not match.";
+            @else
+                errorMessage.innerText = "An error occurred.";
+            @endif
+
             errorModal.show();
         });
     @endif
 </script>
 @endsection
-
