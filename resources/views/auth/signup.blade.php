@@ -18,8 +18,8 @@
 <!-- Sign Up Form -->
 <div class="row justify-content-center">
     <div class="col-md-6">
-          <!-- Login & Sign Up Toggle Buttons -->
-          <div class="d-flex justify-content-center mb-3">
+        <!-- Login & Sign Up Toggle Buttons -->
+        <div class="d-flex justify-content-center mb-3">
             <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a>
             <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a>
         </div>
@@ -47,7 +47,11 @@
                                 <i class="fa fa-eye"></i>
                             </button>
                         </div>
+                        <small id="passwordError" class="text-danger" style="display:none;">
+                            Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character.
+                        </small>
                     </div>
+
 
                     <div class="mb-3">
                         <label for="password_confirmation" class="form-label">Confirm Password</label>
@@ -77,14 +81,14 @@
             <div class="modal-body text-center p-lg-4">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
                     <circle class="path circle" fill="none" stroke="#198754" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-                    <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5" /> 
-                </svg> 
-                <h4 class="text-success mt-3">Success!</h4> 
+                    <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5" />
+                </svg>
+                <h4 class="text-success mt-3">Success!</h4>
                 <p class="mt-3">You have successfully registered.</p>
                 <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal">Ok</button>
-            </div> 
-        </div> 
-    </div> 
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Error Modal -->
@@ -93,36 +97,56 @@
         <div class="modal-content">
             <div class="modal-body text-center p-lg-4">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle class="path circle" fill="none" stroke="#db3646" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" /> 
+                    <circle class="path circle" fill="none" stroke="#db3646" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
                     <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
-                    <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" /> 
-                </svg> 
-                <h4 class="text-danger mt-3">Error!</h4> 
+                    <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
+                </svg>
+                <h4 class="text-danger mt-3">Error!</h4>
                 <p class="mt-3">This email is already registered.</p>
                 <button type="button" class="btn btn-sm mt-3 btn-danger" data-bs-dismiss="modal">Ok</button>
-            </div> 
-        </div> 
-    </div> 
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-function togglePassword(id) {
-    let input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
-}
+    function togglePassword(id) {
+        let input = document.getElementById(id);
+        input.type = input.type === "password" ? "text" : "password";
+    }
 
-// Show success modal if sign-up is successful
-@if(session('success'))
-    var successModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
-    successModal.show();
-@endif
+    // Password validation on keyup
+    document.getElementById('password').addEventListener('keyup', function() {
+        let password = this.value;
+        let errorMessage = document.getElementById('passwordError');
+        let strongRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
-// Show error modal if email already exists
-@if($errors->has('email'))
-    var errorModal = new bootstrap.Modal(document.getElementById('statusErrorsModal'));
-    errorModal.show();
-@endif
+        if (!strongRegex.test(password)) {
+            errorMessage.style.display = "block";
+            this.setCustomValidity("Password does not meet security requirements.");
+        } else {
+            errorMessage.style.display = "none";
+            this.setCustomValidity("");
+        }
+    });
+
+    // Show success modal if sign-up is successful
+    @if(session('success'))
+        document.addEventListener("DOMContentLoaded", function () {
+            var successModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
+            successModal.show();
+        });
+    @endif
+
+    // Show error modal if email or password errors exist
+    @if($errors->has('email') || $errors->has('password') || session('error'))
+        document.addEventListener("DOMContentLoaded", function () {
+            var errorModal = new bootstrap.Modal(document.getElementById('statusErrorsModal'));
+            errorModal.show();
+        });
+    @endif
 </script>
 @endsection
+
