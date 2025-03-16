@@ -1,53 +1,76 @@
-<!-- Footer -->
-<footer class="text-light">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 col-lg-4 col-xl-3">
-                <h5>About</h5>
-                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                <p class="mb-0">
-                    Le Lorem Ipsum est simplement du faux texte employé dans la composition et la mise en page avant impression.
-                </p>
-            </div>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto">
-                <h5>Informations</h5>
-                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                <ul class="list-unstyled">
-                    <li><a href="">Link 1</a></li>
-                    <li><a href="">Link 2</a></li>
-                    <li><a href="">Link 3</a></li>
-                    <li><a href="">Link 4</a></li>
-                </ul>
-            </div>
 
-            <div class="col-md-3 col-lg-2 col-xl-2 mx-auto">
-                <h5>Others links</h5>
-                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                <ul class="list-unstyled">
-                    <li><a href="">Link 1</a></li>
-                    <li><a href="">Link 2</a></li>
-                    <li><a href="">Link 3</a></li>
-                    <li><a href="">Link 4</a></li>
-                </ul>
-            </div>
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-3 mt-auto">
+        <!-- Container for centered layout -->
+        <div class="container my-5">
 
-            <div class="col-md-4 col-lg-3 col-xl-3">
-                <h5>Contact</h5>
-                <hr class="bg-white mb-2 mt-0 d-inline-block mx-auto w-25">
-                <ul class="list-unstyled">
-                    <li><i class="fa fa-home mr-2"></i> My company</li>
-                    <li><i class="fa fa-envelope mr-2"></i> email@example.com</li>
-                    <li><i class="fa fa-phone mr-2"></i> + 33 12 14 15 16</li>
-                    <li><i class="fa fa-print mr-2"></i> + 33 12 14 15 16</li>
-                </ul>
-            </div>
-            <div class="col-12 copyright mt-3">
-                <p class="float-left">
-                    <a href="#">Back to top</a>
-                </p>
-                <p class="text-right text-muted">created with <i class="fa fa-heart"></i> by <a href="https://t-php.fr/43-theme-ecommerce-bootstrap-4.html"><i>t-php</i></a> | <span>v. 1.0</span></p>
-            </div>
+            <footer class="text-white text-center text-lg-start bg-dark">
+                <!-- Grid container -->
+                <div class="container p-4">
+                    <!--Grid row-->
+                    <div class="row mt-4">
+                        <!-- About Company -->
+                        <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                            <h5 class="text-uppercase mb-4">About Tindahang Pinoy</h5>
+                            <p>
+                                Tindahang Pinoy is your trusted online marketplace for authentic Filipino products.
+                                From locally made goods to essential grocery items, we bring the best of the Philippines to your doorstep.
+                            </p>
+                            <p>
+                                We are committed to supporting Filipino businesses and ensuring our customers receive quality products with excellent service.
+                            </p>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                            <h5 class="text-uppercase mb-4 pb-1">Contact Information</h5>
+                            <ul class="fa-ul" style="margin-left: 1.65em;">
+                                <li class="mb-3">
+                                    <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span>
+                                    <span class="ms-2">123 Mabini St, Manila, Philippines</span>
+                                </li>
+                                <li class="mb-3">
+                                    <span class="fa-li"><i class="fas fa-envelope"></i></span>
+                                    <span class="ms-2">support@tindahangpinoy.com</span>
+                                </li>
+                                <li class="mb-3">
+                                    <span class="fa-li"><i class="fas fa-phone"></i></span>
+                                    <span class="ms-2">+63 912 345 6789</span>
+                                </li>
+                                <li class="mb-3">
+                                    <span class="fa-li"><i class="fas fa-clock"></i></span>
+                                    <span class="ms-2">Mon-Sat: 8:00 AM - 9:00 PM</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Opening Hours -->
+                        <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                            <h5 class="text-uppercase mb-4">Store Hours</h5>
+                            <table class="table text-center text-white">
+                                <tbody class="fw-normal">
+                                    <tr>
+                                        <td>Monday - Saturday:</td>
+                                        <td>8:00 AM - 9:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sunday:</td>
+                                        <td>9:00 AM - 8:00 PM</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Grid container -->
+
+                <!-- Copyright -->
+                <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                    © {{ date('Y') }} Tindahang Pinoy - All Rights Reserved.
+                </div>
+            </footer>
         </div>
-    </div>
-</footer>
+    </footer>

@@ -4,37 +4,33 @@
         <a class="navbar-brand" href="{{ route('index') }}">Simple Ecommerce</a>
 
         <!-- Mobile Toggle Button -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
             aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <!-- Navbar Content -->
-        <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <div class="d-flex flex-column flex-md-row w-100 justify-content-between align-items-center">
+                <!-- Left Menu -->
+                <ul class="navbar-nav text-center text-md-start">
+                    <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+                </ul>
 
-            <!-- Left Menu -->
-            <ul class="navbar-nav m-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
-            </ul>
-
-            <!-- Search, Cart & Logout Section -->
-            <div class="d-flex align-items-center">
                 <!-- Search -->
-                <form class="form-inline my-2 my-lg-0 me-2">
+                <form class="d-flex my-2 my-lg-0 mx-auto">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" placeholder="Search...">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-secondary btn-number">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fa fa-search"></i>
+                        </button>
                     </div>
                 </form>
 
-                <!-- Cart and Logout in the same row -->
-                <div class="d-flex align-items-center">
+                <!-- Cart & Logout Section -->
+                <div class="d-flex align-items-center mt-3 mt-md-0">
                     <!-- Cart -->
                     <a class="btn btn-success btn-sm me-2" href="{{ route('cart') }}">
                         <i class="fa fa-shopping-cart"></i> Cart
@@ -42,21 +38,16 @@
                     </a>
 
                     @if(Auth::check())
-                    <!-- Logout -->
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="button" class="btn btn-danger btn-sm me-2 d-flex mt-3" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
-                            Logout
-                        </button>
-                    </form>
+                    <!-- Logout Button (Triggers Modal) -->
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                        Logout
+                    </button>
                     @else
                     <!-- Sign Up -->
                     <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
                     @endif
                 </div>
-
             </div>
-
         </div>
     </div>
 </nav>
