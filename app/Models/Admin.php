@@ -10,7 +10,7 @@ class Admin extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'admins'; // Ensure it points to the correct table
+    protected $table = 'admins'; // Ensure it uses the correct table
 
     protected $fillable = [
         'name', 'username', 'password',
@@ -23,7 +23,4 @@ class Admin extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
-
-    // Specify the guard for admin authentication
-    protected $guard_name = 'admin';
 }

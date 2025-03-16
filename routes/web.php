@@ -37,9 +37,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'adminLogout'])->name('admin.logout');
 
     // Protect Admin Routes
-    Route::middleware(['auth:admin', 'admin'])->group(function () {
+    Route::middleware(['auth:admin'])->group(function () {
         Route::get('/dashboard', function () {
-            return view('admin.dashboard');
+            return view('admin.dashboard'); // Ensure `resources/views/admin/dashboard.blade.php` exists
         })->name('admin.dashboard');
     });
 });
