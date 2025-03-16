@@ -15,14 +15,14 @@
             <!-- Left Menu -->
             <ul class="navbar-nav m-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li> 
+                <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
             </ul>
 
-            <!-- Search, Cart & Sign Up Section -->
+            <!-- Search, Cart & Logout Section -->
             <div class="d-flex align-items-center">
                 <!-- Search -->
-                <form class="form-inline my-2 my-lg-0 mr-2">
+                <form class="form-inline my-2 my-lg-0 me-2">
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control" placeholder="Search...">
                         <div class="input-group-append">
@@ -33,24 +33,53 @@
                     </div>
                 </form>
 
-                <!-- Cart -->
-                <a class="btn btn-success btn-sm mx-2" href="{{ route('cart') }}">
-                    <i class="fa fa-shopping-cart"></i> Cart
-                    <span class="badge badge-light">3</span>
-                </a>
+                <!-- Cart and Logout in the same row -->
+                <div class="d-flex align-items-center">
+                    <!-- Cart -->
+                    <a class="btn btn-success btn-sm me-2" href="{{ route('cart') }}">
+                        <i class="fa fa-shopping-cart"></i> Cart
+                        <span class="badge badge-light">3</span>
+                    </a>
 
-                @if(Auth::check())
-                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-danger btn-sm">Logout</button>
-                </form>
-                @else 
-                <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
-                @endif
-
+                    @if(Auth::check())
+                    <!-- Logout -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="button" class="btn btn-danger btn-sm me-2 d-flex mt-3" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                            Logout
+                        </button>
+                    </form>
+                    @else
+                    <!-- Sign Up -->
+                    <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
+                    @endif
+                </div>
 
             </div>
 
         </div>
     </div>
 </nav>
+
+<!-- Logout Confirmation Modal -->
+<div class="modal fade" id="logoutConfirmModal" tabindex="-1" role="dialog" aria-labelledby="logoutConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="logoutConfirmLabel">Confirm Logout</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fa fa-exclamation-circle text-warning" style="font-size: 2rem;"></i>
+                <p class="mt-3">Are you sure you want to logout?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
