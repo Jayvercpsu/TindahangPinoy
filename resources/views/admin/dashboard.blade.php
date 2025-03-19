@@ -15,10 +15,7 @@
 
 <body>
 
-
-@include('includes.sidebar')
-
-
+    @include('admin.includes.sidebar')
 
     <!-- CONTENT -->
     <section id="content">
