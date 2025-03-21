@@ -2,20 +2,22 @@
 <section id="sidebar">
     <a href="#" class="brand text-decoration-none">
         <i class='bx bxs-smile icon'></i> Tindahang Pinoy
-    </a>    
+    </a>
     <ul class="side-menu">
-        <li><a href="#" class="active text-decoration-none"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
-        
+        <li><a href="{{ route('admin.dashboard') }}" class="active text-decoration-none"><i class='bx bxs-dashboard icon'></i> Dashboard</a></li>
+
         <li class="divider" data-text="Management">Management</li>
-        
-        <li><a href="#" class="text-decoration-none"><i class='bx bxs-bar-chart-alt-2 icon'></i> All Users</a></li>
+
+        <li><a href="{{ route('admin.all-users') }}" class="text-decoration-none">
+                <i class='bx bxs-bar-chart-alt-2 icon'></i> All Users
+            </a></li>
+
 
         <li>
             <a href="#" class="text-decoration-none"><i class='bx bxs-inbox icon'></i> Manage Products <i class='bx bx-chevron-right icon-right'></i></a>
             <ul class="side-dropdown">
-                <li><a href="#" class="text-decoration-none"><i class='bx bx-plus-circle'></i> Add Product</a></li>
-                <li><a href="#" class="text-decoration-none"><i class='bx bx-list-ul'></i> View Products</a></li>
-                <li><a href="#" class="text-decoration-none"><i class='bx bx-refresh'></i> Update Stock</a></li>
+                <li><a href="{{ route('admin.add-product') }}" class="text-decoration-none"><i class='bx bx-plus-circle'></i> Add Product</a></li>
+                <li><a href="{{ route('admin.view-products') }}" class="text-decoration-none"><i class='bx bx-list-ul'></i> View Products</a></li>
             </ul>
         </li>
 
