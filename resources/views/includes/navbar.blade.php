@@ -1,7 +1,7 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <div class="container">
         <!-- Brand -->
-        <a class="navbar-brand" href="{{ route('index') }}">Simple Ecommerce</a>
+        <a class="navbar-brand" href="{{ route('index') }}">Tindahang Pinoy</a>
 
         <!-- Mobile Toggle Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
@@ -29,7 +29,7 @@
                     </div>
                 </form>
 
-                <!-- Cart & Logout Section -->
+                <!-- Cart & User Profile -->
                 <div class="d-flex align-items-center mt-3 mt-md-0">
                     <!-- Cart -->
                     <a class="btn btn-success btn-sm me-2" href="{{ route('cart') }}">
@@ -38,10 +38,23 @@
                     </a>
 
                     @if(Auth::check())
-                    <!-- Logout Button (Triggers Modal) -->
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
-                        Logout
-                    </button>
+                    <!-- User Profile Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <!-- Profile Image -->
+                            <img src="{{ Auth::user()->profile_image ?? asset('default-profile.png') }}" class="rounded-circle me-2" width="30" height="30" alt="Profile">
+                            {{ Auth::user()->name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#">My Account</a></li>
+                            <li>
+                                <!-- Logout Button (Triggers Modal) -->
+                                <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+                                    Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                     @else
                     <!-- Sign Up -->
                     <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
@@ -53,8 +66,8 @@
 </nav>
 
 <!-- Logout Confirmation Modal -->
-<div class="modal fade" id="logoutConfirmModal" tabindex="-1" role="dialog" aria-labelledby="logoutConfirmLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="logoutConfirmLabel">Confirm Logout</h5>
@@ -74,3 +87,6 @@
         </div>
     </div>
 </div>
+
+<!-- Bootstrap JS (Ensure it's included) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

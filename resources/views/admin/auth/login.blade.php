@@ -1,67 +1,64 @@
-@extends('layouts.layout')
+@extends('layouts.admin')
 
 @section('title', 'Admin Login')
 
-@section('content')
-<div class="row">
-    <div class="col">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Admin Login</li>
-            </ol>
-        </nav>
-    </div>
-</div>
+@section('content') 
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header text-center">Admin Login</div>
-            <div class="card-body">
+<!-- Centered Container -->
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="col-md-5">
+        <div class="card shadow-lg border-0 rounded-lg">
+            <div class="card-header bg-dark text-white text-center py-3">
+                <h4 class="mb-0">Admin Login</h4>
+            </div>
+            <div class="card-body p-4">
                 <form method="POST" action="{{ route('admin.login.submit') }}">
                     @csrf
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
+
+                    <!-- Username Field -->
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                        <label for="username">Username</label>
                     </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="password" name="password" required>
-                            <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                        </div>
+
+                    <!-- Password Field with Toggle -->
+                    <div class="form-floating mb-3 position-relative">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <label for="password">Password</label>
+                        <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-50 translate-middle-y me-2" onclick="togglePassword('password')">
+                            <i class="fa fa-eye"></i>
+                        </button>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn btn-dark w-100 fw-bold py-2">Login</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Success Modal -->
-<div class="modal fade" id="adminLoginSuccessModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<!-- ✅ Success Modal -->
+<div class="modal fade" id="adminLoginSuccessModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
-            <div class="modal-body text-center p-lg-4">
-                <h4 class="text-success mt-3">Success!</h4>
-                <p class="mt-3">Admin login successful.</p>
-                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal">Ok</button>
+            <div class="modal-body text-center py-4">
+                <h4 class="text-success mb-3"><i class="fa fa-check-circle"></i> Success!</h4>
+                <p>Admin Logged out successful!</p>
+                <button type="button" class="btn btn-dark btn-sm" data-bs-dismiss="modal">Ok</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Error Modal -->
-<div class="modal fade" id="adminLoginErrorModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<!-- ❌ Error Modal -->
+<div class="modal fade" id="adminLoginErrorModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
-            <div class="modal-body text-center p-lg-4">
-                <h4 class="text-danger mt-3">Error!</h4>
-                <p class="mt-3">Invalid admin credentials.</p>
-                <button type="button" class="btn btn-sm mt-3 btn-danger" data-bs-dismiss="modal">Ok</button>
+            <div class="modal-body text-center py-4">
+                <h4 class="text-danger mb-3"><i class="fa fa-times-circle"></i> Error!</h4>
+                <p>Invalid admin credentials.</p>
+                <button type="button" class="btn btn-dark btn-sm" data-bs-dismiss="modal">Ok</button>
             </div>
         </div>
     </div>
@@ -70,22 +67,29 @@
 
 @section('scripts')
 <script>
+// ✅ Password Toggle
 function togglePassword(id) {
     let input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
+    let icon = input.nextElementSibling.querySelector('i');
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = "password";
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
 }
 
+// ✅ Show Modals if Session Data Exists
 @if(session('success'))
     document.addEventListener("DOMContentLoaded", function () {
-        var successModal = new bootstrap.Modal(document.getElementById('adminLoginSuccessModal'));
-        successModal.show();
+        new bootstrap.Modal(document.getElementById('adminLoginSuccessModal')).show();
     });
 @endif
 
 @if($errors->has('login'))
     document.addEventListener("DOMContentLoaded", function () {
-        var errorModal = new bootstrap.Modal(document.getElementById('adminLoginErrorModal'));
-        errorModal.show();
+        new bootstrap.Modal(document.getElementById('adminLoginErrorModal')).show();
     });
 @endif
 </script>
