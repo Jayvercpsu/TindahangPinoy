@@ -7,7 +7,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @include('includes.navbar');
 
 
@@ -26,6 +26,12 @@
 
 <div class="container py-5">
     <h2 class="text-center mb-4">Our Products</h2>
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach($products as $product)
         <div class="col">
@@ -67,7 +73,7 @@
                 </div>
                 <h5 id="modalProductName"></h5>
                 <p id="modalProductPrice" class="text-muted"></p>
-                
+
                 <form id="addToCartForm" method="POST" action="{{ route('cart.add') }}">
                     @csrf
                     <input type="hidden" name="product_id" id="modalProductId">
@@ -84,22 +90,26 @@
 
 <!-- JavaScript to Handle Modal Data -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById("addToCartModal");
-    const productImage = document.getElementById("modalProductImage");
-    const productName = document.getElementById("modalProductName");
-    const productPrice = document.getElementById("modalProductPrice");
-    const productId = document.getElementById("modalProductId");
+    document.addEventListener("DOMContentLoaded", function() {
+        const modal = document.getElementById("addToCartModal");
+        const productImage = document.getElementById("modalProductImage");
+        const productName = document.getElementById("modalProductName");
+        const productPrice = document.getElementById("modalProductPrice");
+        const productId = document.getElementById("modalProductId");
 
-    document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-        button.addEventListener("click", function() {
-            productImage.src = this.getAttribute("data-image");
-            productName.textContent = this.getAttribute("data-name");
-            productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
-            productId.value = this.getAttribute("data-id");
+        document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+            button.addEventListener("click", function() {
+                productImage.src = this.getAttribute("data-image");
+                productName.textContent = this.getAttribute("data-name");
+                productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
+                productId.value = this.getAttribute("data-id");
+            });
         });
     });
-});
+</script>
+
+<script>
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 </script>
 
 @include('includes.footer');

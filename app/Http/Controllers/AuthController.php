@@ -14,8 +14,14 @@ class AuthController extends Controller
      */
     public function showSignup()
     {
+        if (Auth::check()) {
+            return redirect()->route('index')->with('message', 'You are already logged in!');
+        }
+        
         return view('auth.signup');
     }
+    
+    
 
     /**
      * Handle user sign-up
@@ -68,21 +74,20 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validate input
-        $request->validate([
+        $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
-
-        // Attempt to log in
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->filled('remember'))) {
-            return redirect()->route('index')->with('success', 'Logged in successfully!');
+    
+        if (Auth::attempt($credentials)) {
+            session()->regenerate(); // Ensure session persists after login
+    
+            return redirect()->route('index')->with('success', 'Welcome back!');
         }
-
-        // If login fails, return with error message
-        return back()->withErrors(['login' => 'Invalid email or password'])->withInput();
+    
+        return back()->withErrors(['email' => 'Invalid credentials']);
     }
-
+    
     /**
      * Handle user logout
      */

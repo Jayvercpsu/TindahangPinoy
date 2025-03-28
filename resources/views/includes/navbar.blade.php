@@ -32,9 +32,13 @@
                 <!-- Cart & User Profile -->
                 <div class="d-flex align-items-center mt-3 mt-md-0">
                     <!-- Cart -->
-                    <a class="btn btn-success btn-sm me-2" href="{{ route('cart') }}">
+                    <a class="btn btn-success btn-sm me-2" href="{{ route('cart.index') }}">
                         <i class="fa fa-shopping-cart"></i> Cart
-                        <span class="badge badge-light">3</span>
+                        <span class="badge badge-light cart-count">
+                            {{ auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->distinct('product_id')->count() : 0 }}
+                        </span>
+
+
                     </a>
 
                     @if(Auth::check())
@@ -87,6 +91,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).on('click', '.add-to-cart-btn', function(e) {
+        e.preventDefault();
+
+        let productId = $(this).data('id'); // Get product ID
+
+        $.ajax({
+            url: "{{ route('cart.add') }}",
+            method: "POST",
+            data: {
+                product_id: productId,
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(response) {
+                if (response.success) {
+                    $(".cart-count").text(response.cart_count); // Update cart count to show unique products
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Error adding to cart.");
+            }
+        });
+    });
+</script>
 
 <!-- Bootstrap JS (Ensure it's included) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,69 +3,75 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Cart;
 use App\Models\Product;
 
 class CartController extends Controller
 {
-    /**
-     * Display the cart page.
-     */
     public function index()
     {
-        $cart = session()->get('cart', []);
-        return view('cart', compact('cart'));
-    }
-
-    /**
-     * Add item to cart.
-     */
-    public function add(Request $request)
-    {
-        $product = Product::findOrFail($request->product_id);
-        $quantity = $request->quantity ?? 1;
-    
-        $cart = session()->get('cart', []);
-    
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] += $quantity;
-        } else {
-            $cart[$product->id] = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'price' => $product->price,
-                'quantity' => $quantity,
-                'image' => $product->image,
-            ];
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please log in to view your cart.');
         }
     
-        session()->put('cart', $cart);
+        // Fetch user's cart items along with product details
+        $cartItems = Cart::where('user_id', auth()->id())->with('product')->get();
+    
+        return view('cart', ['cart' => $cartItems]);
+    }
+    
+
+    public function add(Request $request)
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please log in to add items to cart.');
+        }
+    
+        $product = Product::findOrFail($request->product_id);
+    
+        $cartItem = Cart::where('user_id', auth()->id())->where('product_id', $product->id)->first();
+    
+        if ($cartItem) {
+            $cartItem->quantity += $request->quantity ?? 1;
+            $cartItem->save();
+        } else {
+            Cart::create([
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+                'quantity' => $request->quantity ?? 1
+            ]);
+        }
     
         return redirect()->back()->with('success', "{$product->name} added to cart!");
     }
     
-
-    /**
-     * Remove item from cart.
-     */
     public function remove($id)
     {
-        $cart = session()->get('cart', []);
-
-        if (isset($cart[$id])) {
-            unset($cart[$id]);
-            session()->put('cart', $cart);
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please log in to remove items.');
         }
-
-        return redirect()->route('cart.index')->with('success', 'Item removed from cart.');
+    
+        // Find the cart item belonging to the logged-in user
+        $cartItem = Cart::where('user_id', auth()->id())->where('id', $id)->first();
+    
+        if ($cartItem) {
+            $cartItem->delete();
+            return redirect()->route('cart.index')->with('success', 'Item removed from cart.');
+        }
+    
+        return redirect()->route('cart.index')->with('error', 'Item not found in cart.');
     }
-
-    /**
-     * Clear the cart.
-     */
+    
     public function clear()
     {
-        session()->forget('cart');
-
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'Please log in to clear your cart.');
+        }
+    
+        // Delete all cart items for the logged-in user
+        Cart::where('user_id', auth()->id())->delete();
+    
         return redirect()->route('cart.index')->with('success', 'Cart cleared.');
     }
+    
 }
