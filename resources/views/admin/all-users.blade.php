@@ -4,11 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Users</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+   
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -47,13 +50,13 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover">
+                        <table id="usersTable" class="table table-striped table-hover">
                             <thead class="table-dark">
                                 <tr>
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    <th>Action</th> <!-- Changed Role to Action -->
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -63,7 +66,6 @@
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
-                                        <!-- Delete Button (Triggers Modal) -->
                                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
                                             onclick="setDeleteUser({{ $user->id }})">
                                             <i class="fa fa-trash"></i> Delete
@@ -73,7 +75,6 @@
                                 @endforeach
                             </tbody>
                         </table>
-
                     </div>
                 </div>
             </div>
@@ -123,7 +124,23 @@
         });
     </script>
 
+    <!-- Include jQuery & DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
+    <!-- Initialize DataTable -->
+    <script>
+        $(document).ready(function() {
+            $('#usersTable').DataTable({
+                "paging": true, // Enable pagination
+                "searching": true, // Enable search filter
+                "ordering": true, // Enable column sorting
+                "info": true, // Show table info
+                "lengthMenu": [5, 10, 25, 50], // Define page length options
+            });
+        });
+    </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

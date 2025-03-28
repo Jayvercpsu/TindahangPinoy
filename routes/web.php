@@ -4,6 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Admin\Auth\AdminAuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -12,8 +15,8 @@ Route::get('/', function () {
     return view('index');
 })->name('index');
 
-// Other Pages
-Route::view('/product', 'product')->name('product');
+// Other Pages 
+Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::view('/cart', 'cart')->name('cart');
 Route::view('/contact', 'contact')->name('contact');
 
@@ -56,8 +59,19 @@ Route::prefix('admin')->group(function () {
             return view('admin.add-product');
         })->name('admin.add-product');
 
+        Route::post('/add-product', [ProductController::class, 'store'])->name('admin.add-product.store');
+
         Route::get('/view-products', function () {
             return view('admin.view-products');
         })->name('admin.view-products');
+        Route::get('/view-products', [AdminController::class, 'viewProducts'])->name('admin.view-products');
+        Route::put('/products/{id}/update', [ProductController::class, 'update'])->name('products.update');
+        Route::delete('/all-products/{id}', [ProductController::class, 'destroy'])->name('admin.delete-product');
+
+        // cart routes
+        Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+        Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+        Route::get('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');        
     });
 });

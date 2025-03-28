@@ -24,6 +24,12 @@ class Kernel extends HttpKernel
         ],
     ];
 
+    protected $middleware = [
+        \Illuminate\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\CheckPostSize::class,
+
+    ];
+
     /**
      * The application's route middleware.
      */
@@ -33,5 +39,3 @@ class Kernel extends HttpKernel
         'pwa' => \SilvioLeite\LaravelPwa\Http\Middleware\LaravelPwa::class, // ✅ Laravel PWA Middleware
     ];
 }
- 
-     

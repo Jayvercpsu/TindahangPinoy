@@ -4,24 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Products</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <!-- Chart.js for Data Visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <title>Add Product</title>
 </head>
 
 <body>
 
     @include('admin.includes.sidebar')
-
 
     <!-- NAVBAR -->
     <section id="content">
@@ -40,15 +37,63 @@
 
             </div>
 
-            <!-- Info Cards -->
-            <div class="row">
+            @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
+            <div class="card">
+                <div class="card-body">
+                    <form action="{{ route('admin.add-product.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" name="name" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Price</label>
+                            <input type="number" name="price" class="form-control" step="0.01" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Stock</label>
+                            <input type="number" name="stock" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Product Image</label>
+                            <input type="file" name="image" class="form-control" id="imageInput">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Image Preview</label>
+                            <img id="imagePreview" src="#" alt="Image Preview" class="img-fluid" style="max-height: 200px; display: none;">
+                        </div>
+
+                        <script>
+                            document.getElementById('imageInput').addEventListener('change', function(event) {
+                                const [file] = event.target.files;
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = function(e) {
+                                        document.getElementById('imagePreview').src = e.target.result;
+                                        document.getElementById('imagePreview').style.display = 'block';
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        </script>
+
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </form>
+                </div>
             </div>
-
+        </div>
     </section>
-    <!-- NAVBAR -->
-    <!-- MAIN -->
-
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

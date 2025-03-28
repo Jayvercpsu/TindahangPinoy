@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
     <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
     <!-- Bootstrap 5 -->
@@ -34,7 +35,7 @@
                 <h1 class="h3">Dashboard</h1>
 
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item active">Dashboard</li>
                 </ol>
 

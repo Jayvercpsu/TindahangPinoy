@@ -27,67 +27,80 @@
 <div class="container py-5">
     <h2 class="text-center mb-4">Our Products</h2>
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <!-- Product 1 -->
+        @foreach($products as $product)
         <div class="col">
             <div class="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1598618826732-fb2fdf367775?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw1fHxzbWFydHBob25lfGVufDB8MHx8fDE3MjEzMDU4NTZ8MA&ixlib=rb-4.0.3&q=80&w=1080" class="card-img-top" alt="Product 1">
+                <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
                 <div class="card-body">
-                    <h5 class="card-title">Product 1</h5>
-                    <p class="card-text">A brief description of Product 1 and its features.</p>
+                    <h5 class="card-title">{{ $product->name }}</h5>
+                    <p class="card-text">{{ $product->description }}</p>
                     <div class="d-flex justify-content-between align-items-center">
-                        <span class="h5 mb-0">$19.99</span>
-                        <button class="btn btn-outline-primary"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+                        <span class="h5 mb-0">₱{{ number_format($product->price, 2) }}</span>
+                        <button class="btn btn-outline-primary add-to-cart-btn"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addToCartModal"
+                            data-id="{{ $product->id }}"
+                            data-name="{{ $product->name }}"
+                            data-price="{{ $product->price }}"
+                            data-image="{{ asset('storage/' . $product->image) }}">
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        @endforeach
+    </div>
+</div>
 
-        <!-- Product 2 -->
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1720048171731-15b3d9d5473f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MXwxfHNlYXJjaHwxfHxzbWFydHBob25lfGVufDB8MHx8fDE3MjEzMDU4NTZ8MA&ixlib=rb-4.0.3&q=80&w=1080" class="card-img-top" alt="Product 2">
-                <div class="card-body">
-                    <h5 class="card-title">Product 2</h5>
-                    <p class="card-text">A brief description of Product 2 and its features.</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="h5 mb-0">$24.99</span>
-                        <button class="btn btn-outline-primary"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-                    </div>
-                </div>
+<!-- Add to Cart Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-
-        <!-- Product 3 -->
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1600087626120-062700394a01?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw2fHxzbWFydHBob25lfGVufDB8MHx8fDE3MjEzMDU4NTZ8MA&ixlib=rb-4.0.3&q=80&w=1080" class="card-img-top" alt="Product 3">
-                <div class="card-body">
-                    <h5 class="card-title">Product 3</h5>
-                    <p class="card-text">A brief description of Product 3 and its features.</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="h5 mb-0">$29.99</span>
-                        <button class="btn btn-outline-primary"><i class="bi bi-cart-plus"></i> Add to Cart</button>
-                    </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <img id="modalProductImage" src="" class="img-fluid mb-3" style="max-height: 200px;">
                 </div>
-            </div>
-        </div>
-
-        <!-- Product 4 -->
-        <div class="col">
-            <div class="card h-100 shadow-sm">
-                <img src="https://images.unsplash.com/photo-1598965402089-897ce52e8355?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw0fHxzbWFydHBob25lfGVufDB8MHx8fDE3MjEzMDU4NTZ8MA&ixlib=rb-4.0.3&q=80&w=1080" class="card-img-top" alt="Product 4">
-                <div class="card-body">
-                    <h5 class="card-title">Product 4</h5>
-                    <p class="card-text">A brief description of Product 4 and its features.</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="h5 mb-0">$34.99</span>
-                        <button class="btn btn-outline-primary"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+                <h5 id="modalProductName"></h5>
+                <p id="modalProductPrice" class="text-muted"></p>
+                
+                <form id="addToCartForm" method="POST" action="{{ route('cart.add') }}">
+                    @csrf
+                    <input type="hidden" name="product_id" id="modalProductId">
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" name="quantity" id="modalQuantity" class="form-control" value="1" min="1" required>
                     </div>
-                </div>
+                    <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+                </form>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- JavaScript to Handle Modal Data -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("addToCartModal");
+    const productImage = document.getElementById("modalProductImage");
+    const productName = document.getElementById("modalProductName");
+    const productPrice = document.getElementById("modalProductPrice");
+    const productId = document.getElementById("modalProductId");
+
+    document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            productImage.src = this.getAttribute("data-image");
+            productName.textContent = this.getAttribute("data-name");
+            productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
+            productId.value = this.getAttribute("data-id");
+        });
+    });
+});
+</script>
 
 @include('includes.footer');
 
