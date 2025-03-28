@@ -1,14 +1,17 @@
 <section class="jumbotron text-center">
     <div class="container">
         <!-- Carousel -->
-        <div id="welcomeCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+ <!-- Carousel -->
+<div id="welcomeCarousel" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="1500">
+
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>
 
-            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="1500">
+
                 <div class="carousel-inner rounded shadow" style="max-height: 500px; overflow: hidden;">
                     <div class="carousel-item active">
                         <img src="https://th.bing.com/th/id/OIP.qOT0o1HYrE21RfI6IO56aQHaE0?rs=1&pid=ImgDetMain"

@@ -67,10 +67,63 @@
                 </div>
                 <!-- Grid container -->
 
+                <!-- Back to Top Button (Inside Footer) -->
+                <button id="backToTop" class="btn btn-primary rounded-circle p-2 shadow">
+                    <i class="fas fa-arrow-up"></i>
+                </button>
+
+
                 <!-- Copyright -->
                 <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
                     © {{ date('Y') }} Tindahang Pinoy - All Rights Reserved.
                 </div>
+
             </footer>
+
         </div>
+
     </footer>
+
+    <style>
+        #backToTop {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            position: fixed;
+            /* Keeps it fixed on the screen */
+            bottom: 20px;
+            /* Distance from bottom */
+            right: 20px;
+            /* Distance from right */
+            z-index: 1000;
+            /* Ensure it's above other elements */
+            display: none;
+            /* Hidden by default */
+        }
+
+        #backToTop:hover {
+            opacity: 0.8;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let backToTop = document.getElementById("backToTop");
+
+            // Show button as soon as the user scrolls
+            window.addEventListener("scroll", function() {
+                if (window.scrollY > 50) { // Show after 50px of scroll
+                    backToTop.style.display = "block";
+                } else {
+                    backToTop.style.display = "none";
+                }
+            });
+
+            // Smooth scroll to top when button is clicked
+            backToTop.addEventListener("click", function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+        });
+    </script>
