@@ -8,15 +8,19 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 
 // 🔹 Home Page
-Route::get('/', function () {
-    return view('index');
-})->name('index');
+// Route::get('/', function () {
+//     return view('index');
+// })->name('index');
 
 // 🔹 Other Pages 
 Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::view('/contact', 'contact')->name('contact');
+Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('/search', [ProductController::class, 'search'])->name('product.search');
+
 
 // 🔹 User Authentication
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
@@ -63,5 +67,9 @@ Route::prefix('admin')->group(function () {
         Route::get('/view-products', [AdminController::class, 'viewProducts'])->name('admin.view-products');
         Route::put('/products/{id}/update', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/all-products/{id}', [ProductController::class, 'destroy'])->name('admin.delete-product');
+        Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+        
+
     });
 });
+

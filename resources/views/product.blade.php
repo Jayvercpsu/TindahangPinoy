@@ -38,21 +38,26 @@
             <div class="card h-100 shadow-sm">
                 <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ $product->name }}</h5>
-                    <p class="card-text">{{ $product->description }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span class="h5 mb-0">₱{{ number_format($product->price, 2) }}</span>
-                        <button class="btn btn-outline-primary add-to-cart-btn"
-                            data-bs-toggle="modal"
-                            data-bs-target="#addToCartModal"
-                            data-id="{{ $product->id }}"
-                            data-name="{{ $product->name }}"
-                            data-price="{{ $product->price }}"
-                            data-image="{{ asset('storage/' . $product->image) }}">
-                            <i class="bi bi-cart-plus"></i> Add to Cart
-                        </button>
-                    </div>
-                </div>
+    <h5 class="card-title">{{ $product->name }}</h5>
+    <p class="card-text">{{ $product->description }}</p>
+    <p class="text-muted">Stock: <strong>{{ $product->stock }}</strong></p> <!-- Display stock -->
+
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="h5 mb-0">₱{{ number_format($product->price, 2) }}</span>
+
+        <button class="btn btn-outline-primary add-to-cart-btn"
+            data-bs-toggle="modal"
+            data-bs-target="#addToCartModal"
+            data-id="{{ $product->id }}"
+            data-name="{{ $product->name }}"
+            data-price="{{ $product->price }}"
+            data-stock="{{ $product->stock }}"   
+            data-image="{{ asset('storage/' . $product->image) }}">
+            <i class="bi bi-cart-plus"></i> Add to Cart
+        </button>
+    </div>
+</div>
+
             </div>
         </div>
         @endforeach
@@ -68,44 +73,56 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="text-center">
-                    <img id="modalProductImage" src="" class="img-fluid mb-3" style="max-height: 200px;">
-                </div>
-                <h5 id="modalProductName"></h5>
-                <p id="modalProductPrice" class="text-muted"></p>
+    <div class="text-center">
+        <img id="modalProductImage" src="" class="img-fluid mb-3" style="max-height: 200px;">
+    </div>
+    <h5 id="modalProductName"></h5>
+    <p id="modalProductPrice" class="text-muted"></p>
+    <p id="modalProductStock" class="text-danger"></p> <!-- Stock Info -->
 
-                <form id="addToCartForm" method="POST" action="{{ route('cart.add') }}">
-                    @csrf
-                    <input type="hidden" name="product_id" id="modalProductId">
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" name="quantity" id="modalQuantity" class="form-control" value="1" min="1" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
-                </form>
-            </div>
+    <form id="addToCartForm" method="POST" action="{{ route('cart.add') }}">
+        @csrf
+        <input type="hidden" name="product_id" id="modalProductId">
+
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" name="quantity" id="modalQuantity" class="form-control" value="1" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Add to Cart</button>
+    </form>
+</div>
+
         </div>
     </div>
 </div>
 
 <!-- JavaScript to Handle Modal Data -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const modal = document.getElementById("addToCartModal");
-        const productImage = document.getElementById("modalProductImage");
-        const productName = document.getElementById("modalProductName");
-        const productPrice = document.getElementById("modalProductPrice");
-        const productId = document.getElementById("modalProductId");
+   document.addEventListener("DOMContentLoaded", function() {
+    const modal = document.getElementById("addToCartModal");
+    const productImage = document.getElementById("modalProductImage");
+    const productName = document.getElementById("modalProductName");
+    const productPrice = document.getElementById("modalProductPrice");
+    const productStock = document.getElementById("modalProductStock"); // Stock element
+    const productId = document.getElementById("modalProductId");
 
-        document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-            button.addEventListener("click", function() {
-                productImage.src = this.getAttribute("data-image");
-                productName.textContent = this.getAttribute("data-name");
-                productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
-                productId.value = this.getAttribute("data-id");
-            });
+    document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+        button.addEventListener("click", function() {
+            let stock = parseInt(this.getAttribute("data-stock"));
+
+            productImage.src = this.getAttribute("data-image");
+            productName.textContent = this.getAttribute("data-name");
+            productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
+            productStock.textContent = "Stock: " + stock;
+            productStock.style.color = stock > 0 ? "green" : "red";
+            productId.value = this.getAttribute("data-id");
+
+            // Disable the "Add to Cart" button if stock is zero
+            document.querySelector("#addToCartForm button[type='submit']").disabled = (stock <= 0);
         });
     });
+});
+
 </script>
 
 <script>

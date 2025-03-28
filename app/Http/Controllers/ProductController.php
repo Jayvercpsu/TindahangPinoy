@@ -16,7 +16,7 @@ class ProductController extends Controller
         // Pass products to the view
         return view('product', compact('products'));
     }
-    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -86,5 +86,31 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.view-products')->with('success', 'Product and image deleted successfully.');
+    }
+    public function show($id)
+{
+    $product = Product::find($id);
+
+    if (!$product) {
+        return redirect()->route('product')->with('error', 'Product not found.');
+    }
+
+    return view('product.show', compact('product'));
+}
+
+    
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        $products = Product::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
+            ->orWhere('price', 'LIKE', "%{$query}%")
+            ->get();
+
+        $latestProducts = Product::latest()->take(5)->get();
+
+        return view('index', compact('products', 'latestProducts'));
     }
 }

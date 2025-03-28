@@ -85,8 +85,10 @@ class AuthController extends Controller
             return redirect()->route('index')->with('success', 'Welcome back!');
         }
     
-        return back()->withErrors(['email' => 'Invalid credentials']);
+        // Use session flash message instead of withErrors()
+        return redirect()->route('login')->with('error', 'Invalid email or password.');
     }
+    
     
     /**
      * Handle user logout

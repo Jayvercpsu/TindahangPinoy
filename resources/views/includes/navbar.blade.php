@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container">
         <!-- Brand -->
         <a class="navbar-brand" href="{{ route('index') }}">Tindahang Pinoy</a>
@@ -37,22 +37,18 @@
                         <span class="badge badge-light cart-count">
                             {{ auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->distinct('product_id')->count() : 0 }}
                         </span>
-
-
                     </a>
 
                     @if(Auth::check())
                     <!-- User Profile Dropdown -->
                     <div class="dropdown">
                         <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown">
-                            <!-- Profile Image -->
                             <img src="{{ Auth::user()->profile_image ?? asset('default-profile.png') }}" class="rounded-circle me-2" width="30" height="30" alt="Profile">
-                            {{ Auth::user()->name }}
+                         
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="#">My Account</a></li>
                             <li>
-                                <!-- Logout Button (Triggers Modal) -->
                                 <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
                                     Logout
                                 </button>
@@ -60,7 +56,6 @@
                         </ul>
                     </div>
                     @else
-                    <!-- Sign Up -->
                     <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
                     @endif
                 </div>
@@ -68,6 +63,7 @@
         </div>
     </div>
 </nav>
+
 
 <!-- Logout Confirmation Modal -->
 <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmLabel" aria-hidden="true">
