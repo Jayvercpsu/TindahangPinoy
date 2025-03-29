@@ -35,10 +35,16 @@
                     @if(Auth::check())
                     <!-- User Profile Dropdown -->
                     <div class="dropdown">
-                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown">
-                            <img src="{{ Auth::user()->profile_image ?? asset('default-profile.png') }}" class="rounded-circle me-2" width="30" height="30" alt="Profile">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center"
+                            type="button" id="userDropdown" data-bs-toggle="dropdown">
 
+                            <!-- Profile Image -->
+                            <img src="{{ Auth::user()->profile_picture 
+                    ? asset('storage/profile_images/' . Auth::user()->profile_picture) 
+                    : asset('images/default-profile.jpg') }}"
+                                class="rounded-circle me-2" width="30" height="30" alt="Profile">
                         </button>
+
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
                                 <a class="dropdown-item" href="{{ route('account.index') }}">My Account</a>
@@ -50,6 +56,7 @@
                             </li>
                         </ul>
                     </div>
+
                     @else
                     <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
                     @endif

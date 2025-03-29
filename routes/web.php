@@ -31,7 +31,6 @@ Route::middleware('auth')->group(function () {
     // Address Management Routes
     Route::get('/my-account/addresses', [AccountController::class, 'addresses'])->name('account.addresses');
     Route::get('/my-account/addresses/create', [AccountController::class, 'createAddress'])->name('addresses.create');
-    Route::post('/my-account/addresses', [AccountController::class, 'storeAddress'])->name('addresses.store');
     Route::get('/my-account/addresses/{id}/edit', [AccountController::class, 'editAddress'])->name('addresses.edit');
     Route::put('/my-account/addresses/{id}', [AccountController::class, 'updateAddress'])->name('addresses.update');
     Route::delete('/my-account/addresses/{id}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
@@ -43,8 +42,7 @@ Route::middleware('auth')->group(function () {
     // Remove Profile Picture Route (POST Request)
     Route::post('/my-account/remove-profile-picture', [AccountController::class, 'removeProfilePicture'])
         ->name('profile.removePicture');
-
-
+    Route::post('/my-account/addresses/storeOrUpdate', [AccountController::class, 'storeOrUpdateAddress'])->name('addresses.storeOrUpdate');
 });
 
 
@@ -96,8 +94,5 @@ Route::prefix('admin')->group(function () {
         Route::put('/products/{id}/update', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/all-products/{id}', [ProductController::class, 'destroy'])->name('admin.delete-product');
         Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
-        
-
     });
 });
-

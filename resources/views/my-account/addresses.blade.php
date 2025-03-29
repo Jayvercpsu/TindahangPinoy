@@ -24,32 +24,44 @@
             <div class="col-md-9 main-container">
                 <h2 class="mb-4">My Addresses</h2>
 
-                <form method="POST" action="{{ route('addresses.updateAll') }}">
-                    @csrf
-                    @method('PUT')
+                @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+@endif
 
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <input type="text" name="address" class="form-control" placeholder="Enter address" required>
-                    </div>
+<form method="POST" action="{{ route('addresses.storeOrUpdate') }}">
+    @csrf
+    <div class="mb-3">
+        <label class="form-label">Address</label>
+        <input type="text" name="address" class="form-control" placeholder="Enter address"
+               value="{{ old('address', $address->address ?? '') }}" required>
+    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">City</label>
-                        <input type="text" name="city" class="form-control" placeholder="Enter city" required>
-                    </div>
+    <div class="mb-3">
+        <label class="form-label">City</label>
+        <input type="text" name="city" class="form-control" placeholder="Enter city"
+               value="{{ old('city', $address->city ?? '') }}" required>
+    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">State</label>
-                        <input type="text" name="state" class="form-control" placeholder="Enter state" required>
-                    </div>
+    <div class="mb-3">
+        <label class="form-label">State</label>
+        <input type="text" name="state" class="form-control" placeholder="Enter state"
+               value="{{ old('state', $address->state ?? '') }}" required>
+    </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Zip Code</label>
-                        <input type="text" name="zip_code" class="form-control" placeholder="Enter zip code" required>
-                    </div>
+    <div class="mb-3">
+        <label class="form-label">Zip Code</label>
+        <input type="text" name="zip_code" class="form-control" placeholder="Enter zip code"
+               value="{{ old('zip_code', $address->zip_code ?? '') }}" required>
+    </div>
 
-                    <button type="submit" class="btn btn-success w-100">Save Address</button>
-                </form>
+    <button type="submit" class="btn btn-success w-100">{{ $address ? 'Update Address' : 'Save Address' }}</button>
+</form>
+
+
+
             </div>
 
 
