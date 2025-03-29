@@ -1,8 +1,8 @@
 <section class="jumbotron text-center">
     <div class="container">
         <!-- Carousel -->
- <!-- Carousel -->
-<div id="welcomeCarousel" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="1500">
+        <!-- Carousel -->
+        <div id="welcomeCarousel" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="1500">
 
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#welcomeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>

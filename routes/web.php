@@ -9,6 +9,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AccountController;
 
 // 🔹 Home Page
 // Route::get('/', function () {
@@ -20,6 +21,33 @@ Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::view('/contact', 'contact')->name('contact');
 Route::get('/', [HomeController::class, 'index'])->name('index');
 Route::get('/search', [ProductController::class, 'search'])->name('product.search');
+
+Route::middleware('auth')->group(function () {
+    // My Account Dashboard
+    Route::get('/my-account', [AccountController::class, 'index'])->name('account.index');
+
+    // Profile Settings Routes
+    Route::get('/my-account/profile-settings', [AccountController::class, 'profileSettings'])->name('account.profileSettings');
+    // Address Management Routes
+    Route::get('/my-account/addresses', [AccountController::class, 'addresses'])->name('account.addresses');
+    Route::get('/my-account/addresses/create', [AccountController::class, 'createAddress'])->name('addresses.create');
+    Route::post('/my-account/addresses', [AccountController::class, 'storeAddress'])->name('addresses.store');
+    Route::get('/my-account/addresses/{id}/edit', [AccountController::class, 'editAddress'])->name('addresses.edit');
+    Route::put('/my-account/addresses/{id}', [AccountController::class, 'updateAddress'])->name('addresses.update');
+    Route::delete('/my-account/addresses/{id}', [AccountController::class, 'destroyAddress'])->name('addresses.destroy');
+    Route::put('/my-account/addresses/update-all', [AccountController::class, 'updateAllAddresses'])->name('addresses.updateAll');
+    // Profile Update Route (PUT Request)
+    Route::put('/my-account/profile-update', [AccountController::class, 'updateProfile'])
+        ->name('profile.update');
+
+    // Remove Profile Picture Route (POST Request)
+    Route::post('/my-account/remove-profile-picture', [AccountController::class, 'removeProfilePicture'])
+        ->name('profile.removePicture');
+
+
+});
+
+
 
 
 // 🔹 User Authentication

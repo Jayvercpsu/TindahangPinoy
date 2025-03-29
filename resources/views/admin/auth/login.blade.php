@@ -32,6 +32,13 @@
 
                     <!-- Login Button -->
                     <button type="submit" class="btn btn-dark w-100 fw-bold py-2">Login</button>
+
+                    <!-- Back to Home Button -->
+                    <div class="text-center mt-3">
+                        <a href="{{ route('index') }}" class="btn btn-outline-dark">
+                            <i class="fas fa-home me-2"></i> Back to Home
+                        </a>
+                    </div>
                 </form>
             </div>
         </div>

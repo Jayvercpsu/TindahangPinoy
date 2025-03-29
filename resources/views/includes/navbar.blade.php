@@ -1,7 +1,10 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <div class="container">
         <!-- Brand -->
-        <a class="navbar-brand" href="{{ route('index') }}">Tindahang Pinoy</a>
+        <a class="navbar-brand" href="{{ route('index') }}">
+            <i class="fas fa-store me-2"></i> Tindahang Pinoy
+        </a>
+
 
         <!-- Mobile Toggle Button -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
@@ -19,16 +22,6 @@
                     <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
                 </ul>
 
-                <!-- Search -->
-                <form class="d-flex my-2 my-lg-0 mx-auto">
-                    <div class="input-group input-group-sm">
-                        <input type="text" class="form-control" placeholder="Search...">
-                        <button type="submit" class="btn btn-secondary">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </div>
-                </form>
-
                 <!-- Cart & User Profile -->
                 <div class="d-flex align-items-center mt-3 mt-md-0">
                     <!-- Cart -->
@@ -44,10 +37,12 @@
                     <div class="dropdown">
                         <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown">
                             <img src="{{ Auth::user()->profile_image ?? asset('default-profile.png') }}" class="rounded-circle me-2" width="30" height="30" alt="Profile">
-                         
+
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="#">My Account</a></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('account.index') }}">My Account</a>
+                            </li>
                             <li>
                                 <button type="button" class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
                                     Logout
