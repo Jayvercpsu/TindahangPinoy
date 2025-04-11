@@ -45,7 +45,7 @@
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password" required>
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
-                                <i class="fa fa-eye"></i>
+                                <span><i class="fa fa-eye"></i></span>
                             </button>
                         </div>
                         <small id="passwordError" class="text-danger" style="display:none;">
@@ -58,7 +58,7 @@
                         <div class="input-group">
                             <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password_confirmation')">
-                                <i class="fa fa-eye"></i>
+                                <span><i class="fa fa-eye"></i></span>
                             </button>
                         </div>
                         <small id="confirmPasswordError" class="text-danger" style="display:none;">
@@ -108,7 +108,16 @@
 <script>
     function togglePassword(id) {
         let input = document.getElementById(id);
-        input.type = input.type === "password" ? "text" : "password";
+        let icon = input.nextElementSibling.querySelector('i');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
     }
 
     function redirectToLogin() {
@@ -145,30 +154,39 @@
         }
     });
 
-    // Show success modal if sign-up is successful
-    @if(session('success'))
-        document.addEventListener("DOMContentLoaded", function () {
-            var successModal = new bootstrap.Modal(document.getElementById('statusSuccessModal'));
-            successModal.show();
-        });
-    @endif
+    // Wait for DOM to load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Show success modal if sign-up is successful
+        @if(session('success'))
+            var successModal = document.getElementById('statusSuccessModal');
+            if (successModal) {
+                var bsSuccessModal = new bootstrap.Modal(successModal);
+                bsSuccessModal.show();
+            }
+        @endif
 
-    // Show error modal if email or password errors exist
-    @if($errors->has('email') || $errors->has('password') || $errors->has('password_confirmation') || session('error'))
-        document.addEventListener("DOMContentLoaded", function () {
-            var errorModal = new bootstrap.Modal(document.getElementById('statusErrorsModal'));
-            var errorMessage = document.getElementById('errorMessage');
+        // Show error modal if email or password errors exist
+        @if($errors->any() || session('error'))
+            var errorModal = document.getElementById('statusErrorsModal');
+            if (errorModal) {
+                var bsErrorModal = new bootstrap.Modal(errorModal);
+                var errorMessage = document.getElementById('errorMessage');
 
-            @if($errors->has('email'))
-                errorMessage.innerText = "This email is already registered.";
-            @elseif($errors->has('password_confirmation'))
-                errorMessage.innerText = "Passwords do not match.";
-            @else
-                errorMessage.innerText = "An error occurred.";
-            @endif
+                @if($errors->has('email'))
+                    errorMessage.innerText = "This email is already registered.";
+                @elseif($errors->has('password'))
+                    errorMessage.innerText = "{{ $errors->first('password') }}";
+                @elseif($errors->has('password_confirmation'))
+                    errorMessage.innerText = "Passwords do not match.";
+                @elseif(session('error'))
+                    errorMessage.innerText = "{{ session('error') }}";
+                @else
+                    errorMessage.innerText = "An error occurred. Please try again.";
+                @endif
 
-            errorModal.show();
-        });
-    @endif
+                bsErrorModal.show();
+            }
+        @endif
+    });
 </script>
 @endsection

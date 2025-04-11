@@ -21,8 +21,6 @@ class AuthController extends Controller
         return view('auth.signup');
     }
     
-    
-
     /**
      * Handle user sign-up
      */
@@ -53,19 +51,23 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
     
-            // Redirect back with success message for modal
-            return redirect()->route('signup')->with('success', 'Account created successfully! Please log in.');
+            // Use success session variable to trigger modal in signup page
+            // This works with the existing signup.blade.php code that shows the modal
+            return redirect()->route('login')->with('success', 'Account created successfully! Please log in.');
         } catch (\Exception $e) {
             return redirect()->route('signup')->withErrors(['error' => 'Something went wrong: ' . $e->getMessage()]);
         }
     }
     
-
     /**
      * Show the login form
      */
     public function showLogin()
     {
+        if (Auth::check()) {
+            return redirect()->route('index')->with('message', 'You are already logged in!');
+        }
+        
         return view('auth.login');
     }
 
@@ -79,23 +81,27 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
     
-        if (Auth::attempt($credentials)) {
-            session()->regenerate(); // Ensure session persists after login
-    
+        if (Auth::attempt($credentials, $request->has('remember'))) {
+            $request->session()->regenerate();
             return redirect()->route('index')->with('success', 'Welcome back!');
         }
     
-        // Use session flash message instead of withErrors()
-        return redirect()->route('login')->with('error', 'Invalid email or password.');
+        // Return with input so the form fields are preserved
+        return back()
+            ->withInput($request->only('email', 'remember'))
+            ->withErrors([
+                'password' => 'Invalid email or password.',
+            ]);
     }
-    
-    
     /**
      * Handle user logout
      */
     public function logout()
     {
         Auth::logout();
+        session()->invalidate();
+        session()->regenerateToken();
+        
         return redirect()->route('login')->with('success', 'Logged out successfully.');
     }
 }

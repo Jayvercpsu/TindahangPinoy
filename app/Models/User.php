@@ -21,4 +21,10 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    public function cart()
+{
+    return $this->hasMany(Cart::class);
+}
+
 }

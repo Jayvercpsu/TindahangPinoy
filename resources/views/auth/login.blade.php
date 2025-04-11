@@ -1,6 +1,6 @@
 @extends('layouts.layout')
 
-@section('title', 'Log In')
+@section('title', 'Login')
 
 @section('content')
 <!-- Breadcrumb -->
@@ -9,23 +9,23 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ route('index') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Log In</li>
+                <li class="breadcrumb-item active" aria-current="page">Login</li>
             </ol>
         </nav>
     </div>
 </div>
 
-<!-- Log In Form -->
+<!-- Login Form -->
 <div class="row justify-content-center">
     <div class="col-md-6">
         <!-- Login & Sign Up Toggle Buttons -->
         <div class="d-flex justify-content-center mb-3">
-            <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a>
-            <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a>
+            <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Log In</a>
+            <a href="{{ route('signup') }}" class="btn btn-primary">Sign Up</a>
         </div>
 
         <div class="card">
-            <div class="card-header text-center">Log In to Your Account</div>
+            <div class="card-header text-center">Login to Your Account</div>
             <div class="card-body">
                 <form method="POST" action="{{ route('login.submit') }}">
                     @csrf
@@ -40,58 +40,34 @@
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password" required>
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('password')">
-                                <i class="fa fa-eye"></i>
+                                <span><i class="fa fa-eye"></i></span>
                             </button>
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-between mb-3">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Remember Me</label>
-                        </div>
-                        <a href="{{ route('password.request') }}">Forgot your password?</a>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">Remember Me</label>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Log In</button>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
             </div>
         </div>
 
         <div class="text-center mt-3">
-            Don't have an account? <a href="{{ route('signup') }}">Sign Up</a>
+            Don't have an account? <a href="{{ route('signup') }}">Sign up</a>
         </div>
     </div>
 </div>
 
-<!-- Login Success Modal -->
-<div class="modal fade" id="loginSuccessModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<!-- Success Modal -->
+<div class="modal fade" id="statusSuccessModal" tabindex="-1" aria-labelledby="statusSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-body text-center p-lg-4">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle class="path circle" fill="none" stroke="#198754" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-                    <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5" />
-                </svg>
                 <h4 class="text-success mt-3">Success!</h4>
-                <p class="mt-3">You have successfully logged in.</p>
-                <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal">Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Logout Success Modal -->
-<div class="modal fade" id="logoutSuccessModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body text-center p-lg-4">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle class="path circle" fill="none" stroke="#198754" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-                    <polyline class="path check" fill="none" stroke="#198754" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="100.2,40.2 51.5,88.8 29.8,67.5" />
-                </svg>
-                <h4 class="text-success mt-3">Success!</h4>
-                <p class="mt-3">You have successfully logged out.</p>
+                <p class="mt-3" id="successMessage">Login successful.</p>
                 <button type="button" class="btn btn-sm mt-3 btn-success" data-bs-dismiss="modal">Ok</button>
             </div>
         </div>
@@ -99,17 +75,12 @@
 </div>
 
 <!-- Error Modal -->
-<div class="modal fade" id="loginErrorModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+<div class="modal fade" id="statusErrorsModal" tabindex="-1" aria-labelledby="statusErrorsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-body text-center p-lg-4">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130.2 130.2">
-                    <circle class="path circle" fill="none" stroke="#db3646" stroke-width="6" stroke-miterlimit="10" cx="65.1" cy="65.1" r="62.1" />
-                    <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="34.4" y1="37.9" x2="95.8" y2="92.3" />
-                    <line class="path line" fill="none" stroke="#db3646" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" x1="95.8" y1="38" x2="34.4" y2="92.2" />
-                </svg>
                 <h4 class="text-danger mt-3">Error!</h4>
-                <p class="mt-3">Invalid email or password.</p>
+                <p class="mt-3" id="errorMessage">Invalid email or password.</p>
                 <button type="button" class="btn btn-sm mt-3 btn-danger" data-bs-dismiss="modal">Ok</button>
             </div>
         </div>
@@ -119,33 +90,53 @@
 
 @section('scripts')
 <script>
-function togglePassword(id) {
-    let input = document.getElementById(id);
-    input.type = input.type === "password" ? "text" : "password";
-}
+    function togglePassword(id) {
+        let input = document.getElementById(id);
+        let icon = input.nextElementSibling.querySelector('i');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+        }
+    }
 
-// Show success modal if login is successful
-@if(session('success') && session('success') === 'Logged in successfully!')
-    document.addEventListener("DOMContentLoaded", function () {
-        var successModal = new bootstrap.Modal(document.getElementById('loginSuccessModal'));
-        successModal.show();
-    });
-@endif
+    // Wait for DOM to load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Show success modal if login successful or message exists
+        @if(session('success'))
+            var successModal = document.getElementById('statusSuccessModal');
+            if (successModal) {
+                var bsSuccessModal = new bootstrap.Modal(successModal);
+                var successMessage = document.getElementById('successMessage');
+                successMessage.innerText = "{{ session('success') }}";
+                bsSuccessModal.show();
+            }
+        @endif
 
-// Show success modal if logout is successful
-@if(session('success') && session('success') === 'Logged out successfully.')
-    document.addEventListener("DOMContentLoaded", function () {
-        var logoutModal = new bootstrap.Modal(document.getElementById('logoutSuccessModal'));
-        logoutModal.show();
+        // Show error modal if login failed
+        @if(session('error') || $errors->any())
+            var errorModal = document.getElementById('statusErrorsModal');
+            if (errorModal) {
+                var bsErrorModal = new bootstrap.Modal(errorModal);
+                var errorMessage = document.getElementById('errorMessage');
+                
+                @if(session('error'))
+                    errorMessage.innerText = "{{ session('error') }}";
+                @elseif($errors->has('email'))
+                    errorMessage.innerText = "{{ $errors->first('email') }}";
+                @elseif($errors->has('password'))
+                    errorMessage.innerText = "{{ $errors->first('password') }}";
+                @else
+                    errorMessage.innerText = "Login failed. Please try again.";
+                @endif
+                
+                bsErrorModal.show();
+            }
+        @endif
     });
-@endif
-
-// Show error modal if login fails
-@if($errors->has('login'))
-    document.addEventListener("DOMContentLoaded", function () {
-        var errorModal = new bootstrap.Modal(document.getElementById('loginErrorModal'));
-        errorModal.show();
-    });
-@endif
 </script>
 @endsection
