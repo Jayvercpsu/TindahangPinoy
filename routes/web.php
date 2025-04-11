@@ -96,5 +96,10 @@ Route::prefix('admin')->group(function () {
         Route::put('/products/{id}/update', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/all-products/{id}', [ProductController::class, 'destroy'])->name('admin.delete-product');
         Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+
+
+        Route::get('/analytics', function () {
+            return view('admin.analytics');
+        })->name('admin.analytics');
     });
 });

@@ -18,10 +18,11 @@
 <!-- Sign Up Form -->
 <div class="row justify-content-center">
     <div class="col-md-6">
+
         <!-- Login & Sign Up Toggle Buttons -->
         <div class="d-flex justify-content-center mb-3">
-            <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a>
-            <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a>
+            <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Log In</a>
+            <a href="{{ route('signup') }}" class="btn btn-primary">Sign Up</a>
         </div>
 
         <div class="card">

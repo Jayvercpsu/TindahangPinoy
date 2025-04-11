@@ -3,6 +3,7 @@
 @section('title', 'Login')
 
 @section('content')
+
 <!-- Breadcrumb -->
 <div class="row">
     <div class="col">
@@ -18,12 +19,12 @@
 <!-- Login Form -->
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <!-- Login & Sign Up Toggle Buttons -->
-        <div class="d-flex justify-content-center mb-3">
-            <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Log In</a>
-            <a href="{{ route('signup') }}" class="btn btn-primary">Sign Up</a>
-        </div>
 
+    <!-- Login & Sign Up Toggle Buttons -->
+<div class="d-flex justify-content-center mb-3">
+    <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a>
+    <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a>
+</div>
         <div class="card">
             <div class="card-header text-center">Login to Your Account</div>
             <div class="card-body">
