@@ -27,7 +27,7 @@
             <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('account.index') ? 'active' : '' }}"
                href="{{ route('account.index') }}">
                 <i class="fa fa-shopping-bag"></i> Orders List
-                <span class="badge bg-secondary">{{ $ordersCount ?? 0 }}</span>
+                <span class="badge bg-secondary">{{ Auth::user()->orders->count() ?? 0 }}</span>
             </a>
             <a class="list-group-item list-group-item-action {{ request()->routeIs('account.profileSettings') ? 'active' : '' }}"
                href="{{ route('account.profileSettings') }}">

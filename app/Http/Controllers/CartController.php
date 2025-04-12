@@ -29,16 +29,34 @@ class CartController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
+        $quantityToAdd = $request->quantity ?? 1;
+
+        // if stock is 0, return error
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', "Cannot add {$product->name} to cart. Out of stock.");
+        }
+        
+        // Check if requested quantity exceeds available stock
+        if ($quantityToAdd > $product->stock) {
+            return redirect()->back()->with('error', "Cannot add more than available stock ({$product->stock}) for {$product->name}.");
+        }
+
         $cartItem = Cart::where('user_id', auth()->id())->where('product_id', $product->id)->first();
 
         if ($cartItem) {
-            $cartItem->quantity += $request->quantity ?? 1;
+            $newQuantity = $cartItem->quantity + $quantityToAdd;
+
+            if ($newQuantity > $product->stock) {
+                return redirect()->back()->with('error', "Adding this quantity exceeds available stock ({$product->stock}) for {$product->name}.");
+            }
+
+            $cartItem->quantity = $newQuantity;
             $cartItem->save();
         } else {
             Cart::create([
                 'user_id' => auth()->id(),
                 'product_id' => $product->id,
-                'quantity' => $request->quantity ?? 1
+                'quantity' => $quantityToAdd
             ]);
         }
 
@@ -76,15 +94,24 @@ class CartController extends Controller
 
     public function buyNow(Request $request)
     {
-        $selectedItems = explode(',', $request->input('selected_items', '')); // Get selected item IDs
-        $cartItems = auth()->user()->cart->whereIn('id', $selectedItems); // Filter selected items
-    
-        $user = auth()->user();
-        $address = $user ? $user->address : null;
-    
+        $selectedItems = explode(',', $request->input('selected_items', '')); 
+        $quantities = explode(',', $request->input('quantities', '')); 
+        $cartItems = Cart::where('user_id', auth()->id())->whereIn('id', $selectedItems)->with('product')->get();
+
+        foreach ($cartItems as $index => $cartItem) {
+            $product = $cartItem->product;
+            $quantity = isset($quantities[$index]) ? (int)$quantities[$index] : $cartItem->quantity;
+
+            if ($quantity > $product->stock) {
+                return redirect()->route('cart.index')->with('error', "Insufficient stock for {$product->name}.");
+            }
+
+            $cartItem->quantity = $quantity;
+            $cartItem->save();
+        }
+
+        $address = auth()->user()->address;
+
         return view('cart.buy-now', compact('cartItems', 'address'));
     }
-    
-    
-    
 }

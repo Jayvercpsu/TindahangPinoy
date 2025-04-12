@@ -24,6 +24,24 @@
     </div>
 </div>
 
+<div class="container mt-3">
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa fa-check-circle me-2"></i>
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fa fa-exclamation-circle me-2"></i>
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+</div>
+
 <div class="container py-5">
     <h2 class="text-center mb-4">Our Products</h2>
     @if(session('success'))
@@ -98,31 +116,53 @@
 
 <!-- JavaScript to Handle Modal Data -->
 <script>
-   document.addEventListener("DOMContentLoaded", function() {
-    const modal = document.getElementById("addToCartModal");
-    const productImage = document.getElementById("modalProductImage");
-    const productName = document.getElementById("modalProductName");
-    const productPrice = document.getElementById("modalProductPrice");
-    const productStock = document.getElementById("modalProductStock"); // Stock element
-    const productId = document.getElementById("modalProductId");
+   document.addEventListener("DOMContentLoaded", function () {
+       const modal = document.getElementById("addToCartModal");
+       const productImage = document.getElementById("modalProductImage");
+       const productName = document.getElementById("modalProductName");
+       const productPrice = document.getElementById("modalProductPrice");
+       const productStock = document.getElementById("modalProductStock");
+       const productId = document.getElementById("modalProductId");
+       const quantityInput = document.getElementById("modalQuantity");
+       const addToCartButton = document.querySelector("#addToCartForm button[type='submit']");
 
-    document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-        button.addEventListener("click", function() {
-            let stock = parseInt(this.getAttribute("data-stock"));
+       document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+           button.addEventListener("click", function () {
+               const stock = parseInt(this.getAttribute("data-stock"));
 
-            productImage.src = this.getAttribute("data-image");
-            productName.textContent = this.getAttribute("data-name");
-            productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
-            productStock.textContent = "Stock: " + stock;
-            productStock.style.color = stock > 0 ? "green" : "red";
-            productId.value = this.getAttribute("data-id");
+               productImage.src = this.getAttribute("data-image");
+               productName.textContent = this.getAttribute("data-name");
+               productPrice.textContent = "Price: ₱" + parseFloat(this.getAttribute("data-price")).toFixed(2);
+               productStock.textContent = "Stock: " + stock;
+               productId.value = this.getAttribute("data-id");
 
-            // Disable the "Add to Cart" button if stock is zero
-            document.querySelector("#addToCartForm button[type='submit']").disabled = (stock <= 0);
-        });
-    });
-});
+               // Reset quantity to 1 on open
+               quantityInput.value = 1;
 
+               // Handle stock logic
+               if (stock === 0) {
+                   quantityInput.disabled = true;
+                   addToCartButton.disabled = true;
+                   quantityInput.value = 0;
+               } else {
+                   quantityInput.disabled = false;
+                   addToCartButton.disabled = false;
+
+                   quantityInput.addEventListener("input", function () {
+                       const enteredQty = parseInt(this.value) || 0;
+
+                       if (enteredQty > stock || enteredQty <= 0) {
+                           addToCartButton.disabled = true;
+                           this.classList.add("is-invalid");
+                       } else {
+                           addToCartButton.disabled = false;
+                           this.classList.remove("is-invalid");
+                       }
+                   });
+               }
+           });
+       });
+   });
 </script>
 
 <script>

@@ -6,13 +6,25 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Address;
+use App\Models\Order;
 
 class AccountController extends Controller
 {
     // My Account Dashboard
-    public function index()
+    public function index(Request $request)
     {
-        return view('my-account.my-account', ['user' => Auth::user()]);
+        $query = Order::where('user_id', Auth::id());
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        $orders = $query->orderBy('id', 'desc')->paginate(10);
+
+        return view('my-account.my-account', [
+            'user' => Auth::user(),
+            'orders' => $orders,
+        ]);
     }
 
     // Profile Settings

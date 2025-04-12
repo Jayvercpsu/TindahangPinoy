@@ -24,14 +24,18 @@
             <div class="col-lg-9">
                 <div class="main-container">
                     <div class="d-flex justify-content-end pb-3">
-                        <label class="text-muted me-2" for="order-sort">Sort Orders</label>
-                        <select class="form-select w-auto" id="order-sort">
-                            <option>All</option>
-                            <option>Delivered</option>
-                            <option>In Progress</option>
-                            <option>Delayed</option>
-                            <option>Canceled</option>
-                        </select>
+                        <form method="GET" action="{{ route('account.index') }}" class="d-flex align-items-center">
+                            <label class="text-muted me-2 fw-bold" for="order-sort">Sort Orders:</label>
+                            <select class="form-select w-auto border-primary shadow-sm" id="order-sort" name="status" onchange="this.form.submit()">
+                                <option value="">All</option>
+                                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="in progress" {{ request('status') == 'in progress' ? 'selected' : '' }}>In Progress</option>
+                                <option value="delivered" {{ request('status') == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                <option value="canceled" {{ request('status') == 'canceled' ? 'selected' : '' }}>Canceled</option>
+                            </select>
+                        </form>
                     </div>
 
                     <div class="table-responsive">
@@ -39,50 +43,62 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th>Order #</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
                                     <th>Date Purchased</th>
+                                    <th>Payment Method</th>
                                     <th>Status</th>
                                     <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse($orders as $order)
                                 <tr>
-                                    <td><a class="text-primary text-decoration-none" href="#order-details">78A643CD409</a></td>
-                                    <td>August 08, 2017</td>
-                                    <td><span class="badge bg-danger">Canceled</span></td>
-                                    <td>$760.50</td>
+                                    <td><a href="#" class="text-decoration-none">{{ $order->order_no }}</a></td>
+                                    <td>
+                                        <span>{{ $order->product->name }}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ $order->quantity }}</span>
+                                    </td>
+                                    <td>
+                                        <span>₱{{ number_format($order->product->price, 2) }}</span>
+                                    </td>
+                                    <td>{{ $order->created_at->format('F j, Y') }}</td>
+                                    <td>{{ $order->payment_method }}</td>
+                                    <td>
+                                        @if($order->status == 'approved')
+                                        <span class="badge bg-success">Approved</span>
+                                        @elseif($order->status == 'pending')
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                        @elseif($order->status == 'in progress')
+                                        <span class="badge bg-info">In Progress</span>
+                                        @elseif($order->status == 'delivered')
+                                        <span class="badge bg-primary">Delivered</span>
+                                        @elseif($order->status == 'rejected')
+                                        <span class="badge bg-danger">Rejected</span>
+                                        @else
+                                        <span class="badge bg-secondary">Canceled</span>
+                                        @endif
+                                    </td>
+                                    <td>₱{{ number_format($order->total_amount, 2) }}</td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td><a class="text-primary text-decoration-none" href="#order-details">34VB5540K83</a></td>
-                                    <td>July 21, 2017</td>
-                                    <td><span class="badge bg-info">In Progress</span></td>
-                                    <td>$315.20</td>
+                                    <td colspan="7">No orders found.</td>
                                 </tr>
-                                <tr>
-                                    <td><a class="text-primary text-decoration-none" href="#order-details">112P45A90V2</a></td>
-                                    <td>June 15, 2017</td>
-                                    <td><span class="badge bg-warning">Delayed</span></td>
-                                    <td>$1,264.00</td>
-                                </tr>
-                                <tr>
-                                    <td><a class="text-primary text-decoration-none" href="#order-details">28BA67U0981</a></td>
-                                    <td>May 19, 2017</td>
-                                    <td><span class="badge bg-success">Delivered</span></td>
-                                    <td>$198.35</td>
-                                </tr>
-                                <tr>
-                                    <td><a class="text-primary text-decoration-none" href="#order-details">502TR872W2</a></td>
-                                    <td>April 04, 2017</td>
-                                    <td><span class="badge bg-success">Delivered</span></td>
-                                    <td>$2,133.90</td>
-                                </tr>
-                                <tr>
-                                    <td><a class="text-primary text-decoration-none" href="#order-details">47H76G09F33</a></td>
-                                    <td>March 30, 2017</td>
-                                    <td><span class="badge bg-success">Delivered</span></td>
-                                    <td>$86.40</td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-3">
+                        <nav>
+                            <ul class="pagination pagination-lg shadow-sm">
+                                {{ $orders->links('pagination::bootstrap-4') }}
+                            </ul>
+                        </nav>
                     </div>
                 </div> <!-- End Main Container -->
             </div> <!-- End Orders Table -->
