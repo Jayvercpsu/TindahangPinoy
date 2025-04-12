@@ -97,9 +97,29 @@ Route::prefix('admin')->group(function () {
         Route::delete('/all-products/{id}', [ProductController::class, 'destroy'])->name('admin.delete-product');
         Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
-
         Route::get('/analytics', function () {
             return view('admin.analytics');
         })->name('admin.analytics');
+
+        // Order Management Routes
+        Route::get('/view-orders', function () {
+            return view('admin.view-orders');
+        })->name('admin.view-orders');
+
+        Route::get('/pending-orders', function () {
+            return view('admin.pending-orders');
+        })->name('admin.pending-orders');
+
+        Route::get('/completed-orders', function () {
+            return view('admin.completed-orders');
+        })->name('admin.completed-orders');
+
+        Route::get('/process-refunds', function () {
+            return view('admin.process-refunds');
+        })->name('admin.process-refunds');
+
+        Route::get('/view-sales', function () {
+            return view('admin.view-sales');
+        })->name('admin.view-sales');
     });
 });
