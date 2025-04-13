@@ -47,7 +47,7 @@
                     <div class="card bg-warning text-dark">
                         <div class="card-body">
                             <h5 class="card-title">New Orders</h5>
-                            <h2 class="mb-0">3</h2>
+                            <h2 class="mb-0">{{ $countPending }}</h2>
                             <small>Awaiting approval</small>
                         </div>
                     </div>
@@ -56,11 +56,12 @@
                     <div class="card bg-primary text-white">
                         <div class="card-body">
                             <h5 class="card-title">Approved Orders</h5>
-                            <h2 class="mb-0">5</h2>
+                            <h2 class="mb-0">{{ $countApproved }}</h2>
                             <small>Processing</small>
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-3">
                     <div class="card bg-success text-white">
                         <div class="card-body">

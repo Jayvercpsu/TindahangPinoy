@@ -124,7 +124,10 @@ Route::prefix('admin')->group(function () {
                                     ->take(5)
                                     ->get();
 
-                                return view('admin.pending-orders', compact('orders', 'recentOrders'));
+                                    $countPending = Order::where('status', 'pending')->count();
+                                    $countApproved = Order::where('status', 'approved')->count();
+
+                                return view('admin.pending-orders', compact('orders', 'recentOrders', 'countPending', 'countApproved'));
                             })->name('admin.pending-orders');
 
                             Route::get('/view-orders', function () {
