@@ -41,82 +41,59 @@
             </div>
             @endif
 
+            @include('components.product-info-modal')
+
             <!-- Completed Orders Table -->
             <div class="card">
                 <div class="card-header bg-success text-white">
                     <h3 class="card-title">Completed Orders</h3>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="completedOrdersTable" class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Order Date</th>
-                                    <th>Completion Date</th>
-                                    <th>Total</th>
-                                    <th>Payment Method</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Example data, you would replace this with your actual data -->
-                                <tr>
-                                    <td>1</td>
-                                    <td>ORD-002</td>
-                                    <td>Jane Smith</td>
-                                    <td>2025-04-09</td>
-                                    <td>2025-04-10</td>
-                                    <td>$89.50</td>
-                                    <td>Credit Card</td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-eye"></i> View
-                                        </a>
-                                        <a href="#" class="btn btn-secondary btn-sm">
-                                            <i class="fa fa-file-pdf"></i> Invoice
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>ORD-004</td>
-                                    <td>Michael Brown</td>
-                                    <td>2025-04-07</td>
-                                    <td>2025-04-09</td>
-                                    <td>$120.75</td>
-                                    <td>PayPal</td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-eye"></i> View
-                                        </a>
-                                        <a href="#" class="btn btn-secondary btn-sm">
-                                            <i class="fa fa-file-pdf"></i> Invoice
-                                        </a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>ORD-006</td>
-                                    <td>Sarah Davis</td>
-                                    <td>2025-04-05</td>
-                                    <td>2025-04-06</td>
-                                    <td>$199.99</td>
-                                    <td>Bank Transfer</td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-eye"></i> View
-                                        </a>
-                                        <a href="#" class="btn btn-secondary btn-sm">
-                                            <i class="fa fa-file-pdf"></i> Invoice
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    @php
+                        $rows = $orders->through(function ($order, $index) use ($orders) {
+                            return [
+                                'id' => $orders->firstItem() + $index,
+                                'order_no' => $order->order_no,
+                                'name' => $order->user->name,
+                                'created_at' => $order->created_at->format('Y-m-d'),
+                                'completed_at' => $order->updated_at->format('Y-m-d'),
+                                'total_amount' => '₱' . number_format($order->total_amount, 2),
+                                'payment_method' => ucfirst($order->payment_method),
+                                'product' => $order->product, // Pass product data
+                            ];
+                        });
+
+                        $actions = [
+                            [
+                                'inline' => function ($row) {
+                                    $viewProductBtn = '<button class="btn btn-primary btn-sm me-1" onclick="showProductInfoModal(' . htmlspecialchars(json_encode($row)) . ')">
+                                                        <i class="fa fa-eye"></i> View
+                                                    </button>';
+
+                                    $invoiceBtn = '<a href="' . route('admin.orders.invoice', $row['order_no']) . '" class="btn btn-secondary btn-sm">
+                                                        <i class="fa fa-file-pdf"></i> Invoice
+                                                    </a>';
+
+                                    return '<div class="btn-group">' . $viewProductBtn . $invoiceBtn . '</div>';
+                                },
+                            ],
+                        ];
+                    @endphp
+
+                    <x-data-table 
+                        :headers="[
+                            'id' => '#',
+                            'order_no' => 'Order ID',
+                            'name' => 'Customer',
+                            'created_at' => 'Order Date',
+                            'completed_at' => 'Completion Date',
+                            'total_amount' => 'Total',
+                            'payment_method' => 'Payment Method',
+                        ]"
+                        :rows="$rows"
+                        :actions="$actions"
+                        route="{{ route('admin.completed-orders') }}"
+                    />
                 </div>
             </div>
 
@@ -169,10 +146,18 @@
     <!-- Chart Initialization -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var options = {
+            const monthlyData = <?php echo json_encode($monthlyCompletedOrders ?? []); ?>;
+            const allMonths = [
+                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+            ];
+
+            const year = Object.keys(monthlyData)[0]?.split(" ")[1] || new Date().getFullYear();
+            const chartData = allMonths.map(month => monthlyData[`${month} ${year}`] ?? 0);
+            const options = {
                 series: [{
                     name: 'Completed Orders',
-                    data: [31, 40, 35, 51, 49, 62, 69, 91, 80, 85, 90, 103]
+                    data: chartData // Use the prepared data for the chart
                 }],
                 chart: {
                     height: 300,
@@ -185,7 +170,7 @@
                     enabled: false
                 },
                 stroke: {
-                    curve: 'straight'
+                    curve: 'smooth'
                 },
                 grid: {
                     row: {
@@ -194,12 +179,12 @@
                     },
                 },
                 xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    categories: allMonths, // Use all months for the x-axis
                 },
                 colors: ['#198754'] // Match success green color
             };
 
-            var chart = new ApexCharts(document.querySelector("#completedOrdersChart"), options);
+            const chart = new ApexCharts(document.querySelector("#completedOrdersChart"), options);
             chart.render();
         });
     </script>

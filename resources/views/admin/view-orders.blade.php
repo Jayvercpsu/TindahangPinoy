@@ -41,65 +41,69 @@
             </div>
             @endif
 
+            @if(session('error'))
+            <div id="errorMessage" class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+            @endif
 
+            @include('components.product-info-modal')
             <!-- Orders Table -->
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">All Orders</h3>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="ordersTable" class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Order Date</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($allOrders as $index => $order)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
-                                    <td>{{ $order->order_no }}</td>
-                                    <td>{{ $order->user->name ?? 'N/A' }}</td>
-                                    <td>{{ $order->created_at->format('Y-m-d') }}</td>
-                                    <td>₱{{ number_format($order->total_amount, 2) }}</td>
-                                    <td>
-                                        @php
-                                        $badgeClass = match($order->status) {
-                                        'approved' => 'bg-success',
-                                        'pending' => 'bg-warning',
-                                        'inprogress' => 'bg-info',
-                                        'delivered', 'completed' => 'bg-success',
-                                        'rejected', 'canceled' => 'bg-danger',
-                                        default => 'bg-secondary'
-                                        };
-                                        @endphp
-                                        <span class="badge {{ $badgeClass }}">{{ ucfirst($order->status) }}</span>
-                                    </td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-eye"></i> View
-                                        </a>
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOrderModal"
-                                            onclick="setDeleteOrder('{{ $order->order_no }}')">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
+                    @php
+                    $actions = [
+                        [
+                            'inline' => function ($row) {
+                                $rowJson = htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8');
+                                $orderId = $row['order_id'] ?? null;
 
-                        </table>
-                    </div>
+                                $viewBtn = '<button class="btn btn-primary btn-sm me-1" onclick="showProductInfoModal(' . $rowJson . ')">
+                                    <i class="fa fa-eye"></i> View
+                                </button>';
+
+                                $deleteBtn = '<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOrderModal" 
+                                    onclick="setDeleteOrder(' . $orderId . ')">
+                                    <i class="fa fa-trash"></i> Delete
+                                </button>';
+
+                                return '<div class="btn-group">' . $viewBtn . $deleteBtn . '</div>';
+                            },
+                        ],
+                    ];
+                    @endphp
+                    
+                    <x-data-table
+                        :headers="[
+                        'id' => '#',
+                        'order_no' => 'Order ID',
+                        'name' => 'Customer',
+                        'created_at' => 'Order Date',
+                        'total_amount' => 'Total',
+                        'status' => 'Status',
+                    ]"
+
+                        :rows="$orders->through(function($order, $index) use ($orders) {
+                            return [
+                                'id' => $orders->firstItem() + $index,
+                                'order_no' => $order->order_no,
+                                'order_id' => $order->id,
+                                'name' => $order->user->name,
+                                'created_at' => $order->created_at->format('Y-m-d'),
+                                'total_amount' => '₱' . number_format($order->total_amount, 2),
+                                'status' => view('partials.order-status', ['status' => $order->status])->render(),
+                                'payment_method' => ucfirst($order->payment_method),
+                                'product' => $order->product,
+                            ];
+                        })"
+
+                        :actions="$actions"
+                        route="{{ route('admin.view-orders') }}" />
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -128,9 +132,10 @@
 
     <!-- JavaScript to Set Form Action -->
     <script>
-        function setDeleteOrder(orderId) {
-            document.getElementById('deleteOrderForm').action = "/admin/orders/" + orderId;
-        }
+        function setDeleteOrder(id) {
+            const deleteForm = document.getElementById('deleteOrderForm');
+            deleteForm.action = "/admin/orders/" + id + "/delete"; // Updated to match the new route
+        };
 
         document.addEventListener("DOMContentLoaded", function() {
             let alertBox = document.getElementById("successMessage");
@@ -153,12 +158,11 @@
     <!-- Initialize DataTable -->
     <script>
         $(document).ready(function() {
-            $('#ordersTable').DataTable({
-                "paging": true, // Enable pagination
-                "searching": true, // Enable search filter
-                "ordering": true, // Enable column sorting
-                "info": true, // Show table info
-                "lengthMenu": [5, 10, 25, 50], // Define page length options
+            $('.data-table').DataTable({
+                "paging": false,
+                "searching": false,
+                "ordering": true,
+                "info": false,
             });
         });
     </script>

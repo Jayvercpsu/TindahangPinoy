@@ -104,45 +104,11 @@ Route::prefix('admin')->group(function () {
         })->name('admin.analytics');
 
         // Order Management Routes
-        Route::get('/view-orders', function () {
-            return view('admin.view-orders');
-        })->name('admin.view-orders');
+        Route::get('/view-orders', [OrderController::class, 'viewOrders'])->name('admin.view-orders');
 
+        Route::get('/pending-orders', [OrderController::class, 'pendingOrders'])->name('admin.pending-orders');
 
-
-        // Route::get('/pending-orders', function () {
-        //     return view('admin.pending-orders');
-        // })->name('admin.pending-orders');
-                            Route::get('/pending-orders', function () {
-                                $orders = Order::with('user')
-                                    ->whereIn('status', ['approved', 'pending', 'inprogress', 'delivered', 'rejected', 'canceled'])
-                                    ->orderBy('created_at', 'desc')
-                                    ->get();
-
-                                $recentOrders = Order::with('user')
-                                    ->latest()
-                                    ->take(5)
-                                    ->get();
-
-                                    $countPending = Order::where('status', 'pending')->count();
-                                    $countApproved = Order::where('status', 'approved')->count();
-
-                                return view('admin.pending-orders', compact('orders', 'recentOrders', 'countPending', 'countApproved'));
-                            })->name('admin.pending-orders');
-
-                            Route::get('/view-orders', function () {
-                                $allOrders = Order::with('user')
-                                    ->orderBy('created_at', 'desc')
-                                    ->get();
-
-                                return view('admin.view-orders', compact('allOrders'));
-                            })->name('admin.view-orders');
-
-                            Route::post('/update-order-status', [OrderController::class, 'updateStatus'])->name('admin.update-order-status');
-
-        Route::get('/completed-orders', function () {
-            return view('admin.completed-orders');
-        })->name('admin.completed-orders');
+        Route::get('/completed-orders',  [OrderController::class, 'completedOrders'])->name('admin.completed-orders');
 
         Route::get('/process-refunds', function () {
             return view('admin.process-refunds');
@@ -151,5 +117,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/view-sales', function () {
             return view('admin.view-sales');
         })->name('admin.view-sales');
+
+        Route::delete('/orders/{id}/delete', [OrderController::class, 'deleteOrder'])->name('admin.orders.delete');
+        Route::get('/orders/{orderNo}/invoice', [OrderController::class, 'generateInvoice'])->name('admin.orders.invoice');
+        Route::put('/orders/{id}/approve', [OrderController::class, 'approveOrder'])->name('admin.orders.approve');
+        Route::put('/orders/{id}/complete', [OrderController::class, 'completeOrder'])->name('admin.orders.complete');
     });
 });
