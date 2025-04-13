@@ -72,7 +72,7 @@
                                     <td>
                                         @php
                                         $badgeClass = match($order->status) {
-                                        'approved' => 'bg-primary',
+                                        'approved' => 'bg-success',
                                         'pending' => 'bg-warning',
                                         'inprogress' => 'bg-info',
                                         'delivered', 'completed' => 'bg-success',

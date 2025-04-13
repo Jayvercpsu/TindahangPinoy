@@ -113,28 +113,29 @@ Route::prefix('admin')->group(function () {
         // Route::get('/pending-orders', function () {
         //     return view('admin.pending-orders');
         // })->name('admin.pending-orders');
-        Route::get('/pending-orders', function () {
-            $orders = Order::with('user')
-                ->whereIn('status', ['approved', 'pending', 'inprogress', 'delivered', 'rejected', 'canceled'])
-                ->orderBy('created_at', 'desc')
-                ->get();
+                            Route::get('/pending-orders', function () {
+                                $orders = Order::with('user')
+                                    ->whereIn('status', ['approved', 'pending', 'inprogress', 'delivered', 'rejected', 'canceled'])
+                                    ->orderBy('created_at', 'desc')
+                                    ->get();
 
-            $recentOrders = Order::with('user')
-                ->latest()
-                ->take(5)
-                ->get();
+                                $recentOrders = Order::with('user')
+                                    ->latest()
+                                    ->take(5)
+                                    ->get();
 
-            return view('admin.pending-orders', compact('orders', 'recentOrders'));
-        })->name('admin.pending-orders');
+                                return view('admin.pending-orders', compact('orders', 'recentOrders'));
+                            })->name('admin.pending-orders');
 
-        Route::get('/view-orders', function () {
-            $allOrders = Order::with('user')
-                ->orderBy('created_at', 'desc')
-                ->get();
+                            Route::get('/view-orders', function () {
+                                $allOrders = Order::with('user')
+                                    ->orderBy('created_at', 'desc')
+                                    ->get();
 
-            return view('admin.view-orders', compact('allOrders'));
-        })->name('admin.view-orders');
+                                return view('admin.view-orders', compact('allOrders'));
+                            })->name('admin.view-orders');
 
+                            Route::post('/update-order-status', [OrderController::class, 'updateStatus'])->name('admin.update-order-status');
 
         Route::get('/completed-orders', function () {
             return view('admin.completed-orders');

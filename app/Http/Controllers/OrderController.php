@@ -72,4 +72,19 @@ class OrderController extends Controller
 
         return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
     }
+
+    public function updateStatus(Request $request)
+{
+    $request->validate([
+        'order_no' => 'required',
+        'status' => 'required|in:approved,pending,inprogress,delivered,rejected,canceled',
+    ]);
+
+    $order = Order::where('order_no', $request->order_no)->firstOrFail();
+    $order->status = $request->status;
+    $order->save();
+
+    return redirect()->route('admin.pending-orders')->with('success', 'Order status updated!');
+}
+
 }

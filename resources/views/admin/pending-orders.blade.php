@@ -78,6 +78,7 @@
                     <h3 class="card-title">Pending Orders</h3>
                 </div>
                 <div class="card-body">
+
                     <div class="table-responsive">
                         <table id="pendingOrdersTable" class="table table-striped table-hover">
                             <thead class="table-dark">
@@ -104,7 +105,7 @@
                                         @php
                                         $badgeClass = match($order->status) {
                                         'approved' => 'bg-primary',
-                                        'pending' => 'bg-warning text-dark',
+                                        'pending' => 'bg-warning text-white',
                                         'inprogress' => 'bg-info',
                                         'delivered' => 'bg-success',
                                         'rejected', 'canceled' => 'bg-danger',
@@ -190,31 +191,29 @@
     </section>
 
     <!-- Approve Order Modal -->
-    <div class="modal fade" id="approveOrderModal" tabindex="-1" aria-labelledby="approveOrderModalLabel" aria-hidden="true">
+    <div class="modal fade" id="approveOrderModal" tabindex="-1" aria-labelledby="approveOrderLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title" id="approveOrderModalLabel">Approve Order</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <form method="POST" action="{{ route('admin.update-order-status') }}">
+                @csrf
+                <input type="hidden" name="order_no" id="approveOrderInput">
+                <input type="hidden" name="status" value="approved">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="approveOrderLabel">Approve Order</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to approve this order?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info">Yes, Approve</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to approve this order? This will move it to the processing stage.</p>
-                    <form id="approveOrderForm" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-3">
-                            <label for="approveNotes" class="form-label">Notes (Optional)</label>
-                            <textarea class="form-control" id="approveNotes" name="notes" rows="3" placeholder="Add any special handling instructions..."></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" form="approveOrderForm" class="btn btn-info">Approve Order</button>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
+
 
     <!-- Complete Order Modal -->
     <div class="modal fade" id="completeOrderModal" tabindex="-1" aria-labelledby="completeOrderModalLabel" aria-hidden="true">
@@ -247,28 +246,12 @@
         </div>
     </div>
 
-    <!-- JavaScript to Set Form Action -->
     <script>
-        function setApproveOrder(orderId) {
-            document.getElementById('approveOrderForm').action = "/admin/orders/" + orderId + "/approve";
+        function setApproveOrder(orderNo) {
+            document.getElementById('approveOrderInput').value = orderNo;
         }
-
-        function setCompleteOrder(orderId) {
-            document.getElementById('completeOrderForm').action = "/admin/orders/" + orderId + "/complete";
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            let alertBox = document.getElementById("successMessage");
-
-            if (alertBox) {
-                setTimeout(function() {
-                    alertBox.style.transition = "opacity 1s ease-out";
-                    alertBox.style.opacity = "0";
-                    setTimeout(() => alertBox.remove(), 1000); // Remove from DOM after fade out
-                }, 2000); // Show for 2 seconds before fading
-            }
-        });
     </script>
+
 
     <!-- Include jQuery & DataTables JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
