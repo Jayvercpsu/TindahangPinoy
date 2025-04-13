@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Include DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-   
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -102,76 +102,52 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Example data, you would replace this with your actual data -->
+                                @foreach ($orders as $index => $order)
                                 <tr>
-                                    <td>1</td>
-                                    <td>ORD-001</td>
-                                    <td>John Doe</td>
-                                    <td>2025-04-10</td>
-                                    <td>$159.99</td>
-                                    <td><span class="badge bg-warning text-dark">New</span></td>
-                                    <td>2 days</td>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $order->order_no }}</td>
+                                    <td>{{ $order->user->name ?? 'Unknown' }}</td>
+                                    <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                                    <td>${{ number_format($order->total_amount, 2) }}</td>
+                                    <td>
+                                        @php
+                                        $badgeClass = match($order->status) {
+                                        'approved' => 'bg-primary',
+                                        'pending' => 'bg-warning text-dark',
+                                        'inprogress' => 'bg-info',
+                                        'delivered' => 'bg-success',
+                                        'rejected', 'canceled' => 'bg-danger',
+                                        default => 'bg-secondary'
+                                        };
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }}">{{ ucfirst($order->status) }}</span>
+                                    </td>
+                                    <td>
+                                        {{ $order->created_at->diffForHumans() }}
+                                    </td>
                                     <td>
                                         <div class="btn-group">
                                             <a href="#" class="btn btn-primary btn-sm">
                                                 <i class="fa fa-eye"></i> View
                                             </a>
+                                            @if($order->status == 'pending')
                                             <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#approveOrderModal"
-                                                onclick="setApproveOrder('ORD-001')">
+                                                onclick="setApproveOrder('{{ $order->order_no }}')">
                                                 <i class="fa fa-check-circle"></i> Approve
                                             </button>
+                                            @endif
+                                            @if(in_array($order->status, ['approved', 'inprogress']))
                                             <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#completeOrderModal"
-                                                onclick="setCompleteOrder('ORD-001')">
+                                                onclick="setCompleteOrder('{{ $order->order_no }}')">
                                                 <i class="fa fa-check"></i> Complete
                                             </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>ORD-003</td>
-                                    <td>Robert Johnson</td>
-                                    <td>2025-04-08</td>
-                                    <td>$229.99</td>
-                                    <td><span class="badge bg-primary">Approved</span></td>
-                                    <td>4 days</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#completeOrderModal"
-                                                onclick="setCompleteOrder('ORD-003')">
-                                                <i class="fa fa-check"></i> Complete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>ORD-005</td>
-                                    <td>Emily Wilson</td>
-                                    <td>2025-04-11</td>
-                                    <td>$75.50</td>
-                                    <td><span class="badge bg-warning text-dark">New</span></td>
-                                    <td>1 day</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#approveOrderModal"
-                                                onclick="setApproveOrder('ORD-005')">
-                                                <i class="fa fa-check-circle"></i> Approve
-                                            </button>
-                                            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#completeOrderModal"
-                                                onclick="setCompleteOrder('ORD-005')">
-                                                <i class="fa fa-check"></i> Complete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @endforeach
                             </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -184,30 +160,40 @@
                 </div>
                 <div class="card-body">
                     <ul class="list-group">
+                        @forelse($recentOrders as $order)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
-                                <i class="fa fa-check-circle text-success me-2"></i>
-                                Order #ORD-012 was approved by Admin
+                                @php
+                                $icon = match($order->status) {
+                                'approved' => 'fa-check-circle text-success',
+                                'pending' => 'fa-hourglass-half text-warning',
+                                'inprogress' => 'fa-cogs text-info',
+                                'delivered' => 'fa-truck text-primary',
+                                'rejected' => 'fa-times-circle text-danger',
+                                'canceled' => 'fa-ban text-danger',
+                                default => 'fa-info-circle text-muted'
+                                };
+                                @endphp
+                                <i class="fa {{ $icon }} me-2"></i>
+                                Order #{{ $order->order_no }} was {{ $order->status }}
+                                @if($order->user)
+                                by {{ $order->user->name }}
+                                @endif
                             </div>
-                            <span class="text-muted small">10 minutes ago</span>
+                            <span class="text-muted small">{{ $order->updated_at->diffForHumans() }}</span>
                         </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <i class="fa fa-truck text-primary me-2"></i>
-                                Order #ORD-008 was marked as shipped
-                            </div>
-                            <span class="text-muted small">1 hour ago</span>
+                        @empty
+                        <li class="list-group-item">
+                            <i class="fa fa-info-circle text-muted me-2"></i>
+                            No recent order activity found.
                         </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <i class="fa fa-plus-circle text-warning me-2"></i>
-                                New order #ORD-015 received
-                            </div>
-                            <span class="text-muted small">2 hours ago</span>
-                        </li>
+                        @endforelse
                     </ul>
                 </div>
             </div>
+
+
+
 
         </div>
     </section>
