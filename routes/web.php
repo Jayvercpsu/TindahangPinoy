@@ -9,7 +9,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\AccountController; 
+use App\Http\Controllers\AccountController;
 use App\Models\Order;
 
 // 🔹 Home Page
@@ -107,23 +107,33 @@ Route::prefix('admin')->group(function () {
             return view('admin.view-orders');
         })->name('admin.view-orders');
 
+
+
         // Route::get('/pending-orders', function () {
         //     return view('admin.pending-orders');
         // })->name('admin.pending-orders');
-
         Route::get('/pending-orders', function () {
             $orders = Order::with('user')
                 ->whereIn('status', ['approved', 'pending', 'inprogress', 'delivered', 'rejected', 'canceled'])
                 ->orderBy('created_at', 'desc')
                 ->get();
-        
+
             $recentOrders = Order::with('user')
                 ->latest()
                 ->take(5)
                 ->get();
-        
+
             return view('admin.pending-orders', compact('orders', 'recentOrders'));
         })->name('admin.pending-orders');
+
+        Route::get('/view-orders', function () {
+            $allOrders = Order::with('user')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return view('admin.view-orders', compact('allOrders'));
+        })->name('admin.view-orders');
+
 
         Route::get('/completed-orders', function () {
             return view('admin.completed-orders');

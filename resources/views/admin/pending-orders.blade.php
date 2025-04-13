@@ -62,15 +62,6 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-info text-dark">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Ship</h5>
-                            <h2 class="mb-0">2</h2>
-                            <small>Packaged orders</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
                     <div class="card bg-success text-white">
                         <div class="card-body">
                             <h5 class="card-title">Shipped</h5>
@@ -108,7 +99,7 @@
                                     <td>{{ $order->order_no }}</td>
                                     <td>{{ $order->user->name ?? 'Unknown' }}</td>
                                     <td>{{ $order->created_at->format('Y-m-d') }}</td>
-                                    <td>${{ number_format($order->total_amount, 2) }}</td>
+                                    <td>₱{{ number_format($order->total_amount, 2) }}</td>
                                     <td>
                                         @php
                                         $badgeClass = match($order->status) {

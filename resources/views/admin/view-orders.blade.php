@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Include DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-   
+
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -62,59 +62,39 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Example data, you would replace this with your actual data -->
+                                @foreach ($allOrders as $index => $order)
                                 <tr>
-                                    <td>1</td>
-                                    <td>ORD-001</td>
-                                    <td>John Doe</td>
-                                    <td>2025-04-10</td>
-                                    <td>$159.99</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $order->order_no }}</td>
+                                    <td>{{ $order->user->name ?? 'N/A' }}</td>
+                                    <td>{{ $order->created_at->format('Y-m-d') }}</td>
+                                    <td>₱{{ number_format($order->total_amount, 2) }}</td>
+                                    <td>
+                                        @php
+                                        $badgeClass = match($order->status) {
+                                        'approved' => 'bg-primary',
+                                        'pending' => 'bg-warning',
+                                        'inprogress' => 'bg-info',
+                                        'delivered', 'completed' => 'bg-success',
+                                        'rejected', 'canceled' => 'bg-danger',
+                                        default => 'bg-secondary'
+                                        };
+                                        @endphp
+                                        <span class="badge {{ $badgeClass }}">{{ ucfirst($order->status) }}</span>
+                                    </td>
                                     <td>
                                         <a href="#" class="btn btn-primary btn-sm">
                                             <i class="fa fa-eye"></i> View
                                         </a>
                                         <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOrderModal"
-                                            onclick="setDeleteOrder('ORD-001')">
+                                            onclick="setDeleteOrder('{{ $order->order_no }}')">
                                             <i class="fa fa-trash"></i> Delete
                                         </button>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>ORD-002</td>
-                                    <td>Jane Smith</td>
-                                    <td>2025-04-09</td>
-                                    <td>$89.50</td>
-                                    <td><span class="badge bg-success">Completed</span></td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-eye"></i> View
-                                        </a>
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOrderModal"
-                                            onclick="setDeleteOrder('ORD-002')">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>ORD-003</td>
-                                    <td>Robert Johnson</td>
-                                    <td>2025-04-08</td>
-                                    <td>$229.99</td>
-                                    <td><span class="badge bg-warning">Pending</span></td>
-                                    <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
-                                            <i class="fa fa-eye"></i> View
-                                        </a>
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteOrderModal"
-                                            onclick="setDeleteOrder('ORD-003')">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
+                                @endforeach
                             </tbody>
+
                         </table>
                     </div>
                 </div>
