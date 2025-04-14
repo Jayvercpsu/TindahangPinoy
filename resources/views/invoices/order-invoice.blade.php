@@ -62,7 +62,7 @@
             </tr>
             <tr>
                 <th>Payment Method:</th>
-                <td>{{ ucfirst($order->payment_method) }}</td>
+                <td>{{ strtoupper($order->payment_method) }}</td>
             </tr>
         </table>
 

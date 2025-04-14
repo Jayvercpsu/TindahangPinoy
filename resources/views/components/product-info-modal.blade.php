@@ -13,6 +13,7 @@
                 <h4 id="modalProductName" class="fw-bold"></h4>
                 <p id="modalProductDescription" class="text-muted"></p>
                 <p id="modalProductPrice" class="text-danger fw-bold"></p>
+                 <p class="text-muted">Quantity: <span id="modalProductQuantity" class="fw-bold"></span></p>
                 <p id="modalPaymentMethod" class="text-muted"></p>
             </div>
         </div>
@@ -27,6 +28,7 @@
         const productName = document.getElementById('modalProductName');
         const productDescription = document.getElementById('modalProductDescription');
         const productPrice = document.getElementById('modalProductPrice');
+        const productQuantity = document.getElementById('modalProductQuantity');
         const paymentMethod = document.getElementById('modalPaymentMethod');
 
         // Set modal content
@@ -34,13 +36,26 @@
             ? `{{ asset('storage/') }}/${order.product.image}` 
             : '{{ asset("storage/default-product.png") }}';
         orderNumber.textContent = `Order #: ${order.order_no}`;
-        productName.textContent = order.product.name;
-        productDescription.textContent = order.product.description;
+        productName.textContent = 'Product: ' + order.product.name;
+        productDescription.textContent = '- ' + (order.product.description ? order.product.description : 'No description available');
         productPrice.textContent = `Price: ₱${parseFloat(order.product.price).toFixed(2)}`;
-        paymentMethod.textContent = `Payment Method: ${order.payment_method}`;
-
+        productQuantity.textContent = order.quantity;
+        paymentMethod.textContent = `Payment Method: ${order.payment_method ? order.payment_method.toUpperCase() : 'N/A'}`;
         // Show modal
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();
     }
+
+    // Add event listener for modal close button
+    document.querySelector('.btn-close').addEventListener('click', function() {
+        const modal = document.getElementById('productInfoModal');
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        modalInstance.hide();
+        // Remove modal backdrop
+        document.querySelector('.modal-backdrop').remove();
+        // Remove modal-open class from body
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    });
 </script>

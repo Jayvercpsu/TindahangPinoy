@@ -35,7 +35,7 @@
                             <option value="canceled">Canceled</option>
                         </select>
                     </div>
-
+                    @include('components.product-info-modal')
                     <div class="table-responsive">
                         <table class="table table-hover table-bordered text-center">
                             <thead class="table-dark">
@@ -44,6 +44,7 @@
                                     <th>Date Purchased</th>
                                     <th>Status</th>
                                     <th>Total</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -67,6 +68,11 @@
                                         @endif
                                     </td>
                                     <td>₱{{ number_format($order->total_amount, 2) }}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productInfoModal" onclick="showProductInfoModal(<?php echo htmlspecialchars(json_encode($order)); ?>)">
+                                            <i class="fa fa-eye"></i> View
+                                        </button>
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -19,7 +19,7 @@ class AccountController extends Controller
             $query->where('status', $request->status);
         }
 
-        $orders = $query->orderBy('id', 'desc')->paginate(10);
+        $orders = $query->with('product')->orderBy('id', 'desc')->paginate(10);
 
         return view('my-account.my-account', [
             'user' => Auth::user(),
