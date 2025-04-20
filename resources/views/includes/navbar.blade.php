@@ -17,7 +17,7 @@
             <div class="d-flex flex-column flex-md-row w-100 justify-content-between align-items-center">
                 <!-- Left Menu -->
                 <ul class="navbar-nav text-center text-md-start">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Home</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Home</a></li> -->
                     <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
                 </ul>

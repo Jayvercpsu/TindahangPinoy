@@ -165,7 +165,7 @@
             </div>
 
             <!-- Recent Order Activity -->
-            <div class="card mt-4">
+            <!-- <div class="card mt-4">
                 <div class="card-header">
                     <h3 class="card-title">Recent Order Activity</h3>
                 </div>
@@ -194,7 +194,7 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div> -->
 
         </div>
     </section>
