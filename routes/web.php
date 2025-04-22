@@ -114,9 +114,7 @@ Route::prefix('admin')->group(function () {
             return view('admin.process-refunds');
         })->name('admin.process-refunds');
 
-        Route::get('/view-sales', function () {
-            return view('admin.view-sales');
-        })->name('admin.view-sales');
+        Route::get('/view-sales',  [OrderController::class, 'viewSales'])->name('admin.view-sales');
 
         Route::delete('/orders/{id}/delete', [OrderController::class, 'deleteOrder'])->name('admin.orders.delete');
         Route::get('/orders/{orderNo}/invoice', [OrderController::class, 'generateInvoice'])->name('admin.orders.invoice');

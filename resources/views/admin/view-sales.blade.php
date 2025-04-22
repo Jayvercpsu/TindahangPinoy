@@ -48,7 +48,7 @@
                     <div class="card bg-primary text-white">
                         <div class="card-body">
                             <h5 class="card-title">Total Sales</h5>
-                            <h2 class="mb-0">$9,875.50</h2>
+                            <h2 class="mb-0">₱{{ number_format($currentMonthSales, 2) }}</h2>
                             <small>Current month</small>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                     <div class="card bg-success text-white">
                         <div class="card-body">
                             <h5 class="card-title">Orders</h5>
-                            <h2 class="mb-0">124</h2>
+                            <h2 class="mb-0">{{ $monthlyOrderCount }}</h2>
                             <small>Current month</small>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                     <div class="card bg-info text-white">
                         <div class="card-body">
                             <h5 class="card-title">Average Order</h5>
-                            <h2 class="mb-0">$79.64</h2>
+                            <h2 class="mb-0">₱{{ number_format($averageOrderValue, 2) }}</h2>
                             <small>Current month</small>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                     <div class="card bg-warning text-dark">
                         <div class="card-body">
                             <h5 class="card-title">Revenue Growth</h5>
-                            <h2 class="mb-0">+12.5%</h2>
+                            <h2 class="mb-0">{{ $revenueGrowth >= 0 ? '+' : '' }}{{ number_format($revenueGrowth, 1) }}%</h2>
                             <small>vs last month</small>
                         </div>
                     </div>
@@ -88,21 +88,20 @@
                     <h3 class="card-title">Filter Sales</h3>
                 </div>
                 <div class="card-body">
-                    <form id="salesFilterForm" class="row g-3">
+                    <form id="salesFilterForm" class="row g-3" method="GET">
                         <div class="col-md-4">
                             <label for="dateRange" class="form-label">Date Range</label>
-                            <input type="text" class="form-control" id="dateRange" name="dateRange" value="04/01/2025 - 04/12/2025">
+                            <input type="text" class="form-control" id="dateRange" name="dateRange">
                         </div>
                         <div class="col-md-3">
                             <label for="paymentMethod" class="form-label">Payment Method</label>
                             <select class="form-select" id="paymentMethod" name="paymentMethod">
                                 <option value="">All Methods</option>
-                                <option value="credit_card">Credit Card</option>
-                                <option value="paypal">PayPal</option>
-                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="cod" {{ request('paymentMethod') == 'cod' ? 'selected' : '' }}>COD (CASH ON DELIVERY)</option>
+                                <option value="gcash" {{ request('paymentMethod') == 'gcash' ? 'selected' : '' }}>GCASH (QR CODE)</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <label for="status" class="form-label">Status</label>
                             <select class="form-select" id="status" name="status">
                                 <option value="">All Statuses</option>
@@ -110,7 +109,7 @@
                                 <option value="pending">Pending</option>
                                 <option value="refunded">Refunded</option>
                             </select>
-                        </div>
+                        </div> -->
                         <div class="col-md-2">
                             <label class="form-label">&nbsp;</label>
                             <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
@@ -126,141 +125,6 @@
                 </div>
                 <div class="card-body">
                     <div id="salesChart" style="height: 300px;"></div>
-                </div>
-            </div>
-
-            <!-- Sales Table -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">Sales Transactions</h3>
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-download me-1"></i> Export
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                                <li><a class="dropdown-item" href="#"><i class="fa fa-file-excel me-2"></i>Export to Excel</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fa fa-file-pdf me-2"></i>Export to PDF</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="fa fa-file-csv me-2"></i>Export to CSV</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="salesTable" class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Transaction ID</th>
-                                    <th>Order ID</th>
-                                    <th>Customer</th>
-                                    <th>Date</th>
-                                    <th>Payment Method</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Example data, you would replace this with your actual data -->
-                                <tr>
-                                    <td>TRX-001245</td>
-                                    <td>ORD-002</td>
-                                    <td>Jane Smith</td>
-                                    <td>2025-04-10</td>
-                                    <td>Credit Card</td>
-                                    <td>$89.50</td>
-                                    <td><span class="badge bg-success">Completed</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <a href="#" class="btn btn-secondary btn-sm">
-                                                <i class="fa fa-file-invoice"></i> Invoice
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-001244</td>
-                                    <td>ORD-001</td>
-                                    <td>John Doe</td>
-                                    <td>2025-04-09</td>
-                                    <td>PayPal</td>
-                                    <td>$159.99</td>
-                                    <td><span class="badge bg-success">Completed</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <a href="#" class="btn btn-secondary btn-sm">
-                                                <i class="fa fa-file-invoice"></i> Invoice
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-001243</td>
-                                    <td>ORD-003</td>
-                                    <td>Robert Johnson</td>
-                                    <td>2025-04-08</td>
-                                    <td>Bank Transfer</td>
-                                    <td>$229.99</td>
-                                    <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <a href="#" class="btn btn-secondary btn-sm disabled">
-                                                <i class="fa fa-file-invoice"></i> Invoice
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-001242</td>
-                                    <td>ORD-006</td>
-                                    <td>Sarah Davis</td>
-                                    <td>2025-04-07</td>
-                                    <td>Credit Card</td>
-                                    <td>$199.99</td>
-                                    <td><span class="badge bg-success">Completed</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <a href="#" class="btn btn-secondary btn-sm">
-                                                <i class="fa fa-file-invoice"></i> Invoice
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-001241</td>
-                                    <td>ORD-004</td>
-                                    <td>Michael Brown</td>
-                                    <td>2025-04-06</td>
-                                    <td>PayPal</td>
-                                    <td>$120.75</td>
-                                    <td><span class="badge bg-danger">Refunded</span></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <a href="#" class="btn btn-primary btn-sm">
-                                                <i class="fa fa-eye"></i> View
-                                            </a>
-                                            <a href="#" class="btn btn-secondary btn-sm">
-                                                <i class="fa fa-file-invoice"></i> Invoice
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
 
@@ -283,41 +147,6 @@
                         </div>
                         <div class="card-body">
                             <ul class="list-group">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>John Doe</strong>
-                                        <div class="text-muted small">12 purchases</div>
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">$1,245.50</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Sarah Davis</strong>
-                                        <div class="text-muted small">8 purchases</div>
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">$980.75</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Michael Brown</strong>
-                                        <div class="text-muted small">6 purchases</div>
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">$765.25</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Robert Johnson</strong>
-                                        <div class="text-muted small">5 purchases</div>
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">$620.50</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong>Jane Smith</strong>
-                                        <div class="text-muted small">4 purchases</div>
-                                    </div>
-                                    <span class="badge bg-primary rounded-pill">$512.30</span>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -331,7 +160,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    
+
     <!-- Include DateRangePicker Dependencies -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -342,28 +171,26 @@
     <!-- Initialize DataTable & DateRangePicker -->
     <script>
         $(document).ready(function() {
-            // Initialize DataTable
-            $('#salesTable').DataTable({
-                "paging": true,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "lengthMenu": [5, 10, 25, 50],
-                "order": [[3, "desc"]] // Sort by date column (index 3) in descending order
+            // Initialize DateRangePicker with saved values or defaults
+            const startDate = '{!! $startDate->format("m/d/Y") !!}';
+            const endDate = '{!! $endDate->format("m/d/Y") !!}';
+
+            $('#dateRange').daterangepicker({
+                startDate: startDate,
+                endDate: endDate,
+                ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
             });
 
-            // Initialize DateRangePicker
-            $('#dateRange').daterangepicker({
-                startDate: moment().subtract(30, 'days'),
-                endDate: moment(),
-                ranges: {
-                   'Today': [moment(), moment()],
-                   'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                   'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                   'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                   'This Month': [moment().startOf('month'), moment().endOf('month')],
-                   'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                }
+            // Auto-submit form when date range changes
+            $('#dateRange').on('apply.daterangepicker', function(ev, picker) {
+                $('#salesFilterForm').submit();
             });
 
             // Handle success message fade out
@@ -377,12 +204,13 @@
             }
         });
 
-        // Sales Chart
         document.addEventListener("DOMContentLoaded", function() {
+            // Sales Chart Data
+            var monthlySales = @json($monthlySales);
             var salesChartOptions = {
                 series: [{
                     name: 'Sales',
-                    data: [31000, 40000, 35000, 51000, 49000, 62000, 69000, 91000, 80000, 85000, 90000, 103000]
+                    data: Object.values(monthlySales)
                 }],
                 chart: {
                     height: 300,
@@ -398,30 +226,42 @@
                     curve: 'smooth'
                 },
                 xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    categories: Object.keys(monthlySales)
                 },
                 tooltip: {
                     y: {
-                        formatter: function (val) {
-                            return "$" + val.toLocaleString();
+                        formatter: function(val) {
+                            return "₱" + val.toLocaleString();
                         }
                     }
                 },
-                colors: ['#0d6efd']
+                colors: ['#0d6efd'],
+                noData: {
+                    text: 'No sales data available',
+                    align: 'center',
+                    verticalAlign: 'middle',
+                    style: {
+                        fontSize: '16px'
+                    }
+                }
             };
 
             var salesChart = new ApexCharts(document.querySelector("#salesChart"), salesChartOptions);
             salesChart.render();
 
             // Payment Method Chart
+            var paymentData = @json($paymentDistribution);
             var paymentMethodOptions = {
-                series: [65, 25, 10],
+                series: Object.values(paymentData),
+                labels: Object.keys(paymentData).map(method =>
+                    method === 'cod' ? 'Cash on Delivery (COD) - ' + (paymentData[method] === 0 ? '0%' : ((paymentData[method] / Object.values(paymentData).reduce((a, b) => a + b, 0)) * 100).toFixed(1) + '%') :
+                    'GCASH (QR) - ' + (paymentData[method] === 0 ? '0%' : ((paymentData[method] / Object.values(paymentData).reduce((a, b) => a + b, 0)) * 100).toFixed(1) + '%')
+                ),
                 chart: {
-                    width: '100%',
                     type: 'pie',
+                    width: '100%'
                 },
-                labels: ['Credit Card', 'PayPal', 'Bank Transfer'],
-                colors: ['#0d6efd', '#198754', '#6c757d'],
+                colors: ['#0d6efd', '#198754'],
                 responsive: [{
                     breakpoint: 480,
                     options: {
@@ -437,6 +277,22 @@
 
             var paymentMethodChart = new ApexCharts(document.querySelector("#paymentMethodChart"), paymentMethodOptions);
             paymentMethodChart.render();
+
+            // Update top customers list
+            const topCustomers = @json($topCustomers);
+            const topCustomersHtml = topCustomers.length > 0 ?
+                topCustomers.map(customer => `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>${customer.user.name}</strong>
+                            <div class="text-muted small">${customer.purchase_count} purchases</div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">₱${Number(customer.total_spent).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </li>
+                `).join('') :
+                `<li class="list-group-item text-center">No customer data available</li>`;
+
+            document.querySelector('.list-group').innerHTML = topCustomersHtml;
         });
     </script>
 

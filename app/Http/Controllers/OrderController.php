@@ -10,6 +10,7 @@ use App\Models\Product;
 use Illuminate\Support\Str;
 use Dompdf\Dompdf;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -204,6 +205,100 @@ class OrderController extends Controller
                 'message' => 'Error completing order'
             ], 500);
         }
+    }
+
+    public function viewSales(Request $request)
+    {
+        // Date range filter
+        $dateRange = $request->input('dateRange');
+        $startDate = now()->startOfMonth();
+        $endDate = now()->endOfMonth();
+
+        if ($dateRange) {
+            $dates = explode(' - ', $dateRange);
+            $startDate = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[0]))->startOfDay();
+            $endDate = \Carbon\Carbon::createFromFormat('m/d/Y', trim($dates[1]))->endOfDay();
+        }
+        
+        // Base query
+        $query = Order::where('status', 'delivered')
+                     ->whereBetween('updated_at', [$startDate, $endDate]);
+
+        // Apply payment method filter
+        if ($request->filled('paymentMethod')) {
+            $query->where('payment_method', strtolower($request->paymentMethod));
+        }
+
+        // Get orders for calculations
+        $orders = $query->get();
+        
+        // Calculate metrics using filtered data
+        $currentMonthSales = $orders->sum('total_amount');
+        $monthlyOrderCount = $orders->count();
+        $averageOrderValue = $monthlyOrderCount > 0 ? $currentMonthSales / $monthlyOrderCount : 0;
+
+        // Calculate revenue growth
+        $previousQuery = clone $query;
+        $previousStartDate = clone $startDate;
+        $previousEndDate = clone $endDate;
+        $daysDifference = $startDate->diffInDays($endDate);
+        
+        $previousStartDate->subDays($daysDifference + 1);
+        $previousEndDate->subDays($daysDifference + 1);
+        
+        $previousPeriodSales = Order::where('status', 'delivered')
+            ->whereBetween('updated_at', [$previousStartDate, $previousEndDate])
+            ->sum('total_amount');
+
+        $revenueGrowth = $previousPeriodSales > 0 
+            ? (($currentMonthSales - $previousPeriodSales) / $previousPeriodSales) * 100 
+            : 0;
+
+        // Use same query conditions for sales trend
+        $monthlySales = clone $query;
+        $monthlySales = $monthlySales->selectRaw('DATE_FORMAT(updated_at, "%Y-%m-%d") as date, SUM(total_amount) as total_sales')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('total_sales', 'date')
+            ->toArray();
+
+        // Use same query conditions for payment distribution
+        $paymentDistribution = clone $query;
+        $paymentDistribution = $paymentDistribution->selectRaw('payment_method, COUNT(*) as count')
+            ->groupBy('payment_method')
+            ->pluck('count', 'payment_method')
+            ->toArray();
+
+        // Ensure both payment methods exist in distribution
+        if (empty($paymentDistribution)) {
+            $paymentDistribution = ['cod' => 0, 'gcash' => 0];
+        } else {
+            if (!isset($paymentDistribution['cod'])) $paymentDistribution['cod'] = 0;
+            if (!isset($paymentDistribution['gcash'])) $paymentDistribution['gcash'] = 0;
+        }
+
+        // Use same query conditions for top customers
+        $topCustomers = clone $query;
+        $topCustomers = $topCustomers->with('user')
+            ->select('user_id', DB::raw('COUNT(*) as purchase_count'), DB::raw('SUM(total_amount) as total_spent'))
+            ->groupBy('user_id')
+            ->orderBy('total_spent', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Rest of the code remains the same...
+        return view('admin.view-sales', compact(
+            'orders',
+            'currentMonthSales',
+            'monthlyOrderCount',
+            'averageOrderValue',
+            'revenueGrowth',
+            'monthlySales',
+            'paymentDistribution',
+            'topCustomers',
+            'startDate',
+            'endDate'
+        ));
     }
 
     /**
