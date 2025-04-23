@@ -110,9 +110,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/completed-orders',  [OrderController::class, 'completedOrders'])->name('admin.completed-orders');
 
-        Route::get('/process-refunds', function () {
-            return view('admin.process-refunds');
-        })->name('admin.process-refunds');
+        Route::get('/process-refunds',  [OrderController::class, 'processRefunds'])->name('admin.process-refunds');
 
         Route::get('/view-sales',  [OrderController::class, 'viewSales'])->name('admin.view-sales');
 
@@ -120,5 +118,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders/{orderNo}/invoice', [OrderController::class, 'generateInvoice'])->name('admin.orders.invoice');
         Route::put('/orders/{id}/approve', [OrderController::class, 'approveOrder'])->name('admin.orders.approve');
         Route::put('/orders/{id}/complete', [OrderController::class, 'completeOrder'])->name('admin.orders.complete');
+        Route::post('/orders/{id}/approve-refund', [OrderController::class, 'approveRefund'])->name('admin.orders.approve-refund');
+        Route::post('/orders/{id}/deny-refund', [OrderController::class, 'denyRefund'])->name('admin.orders.deny-refund');
     });
 });

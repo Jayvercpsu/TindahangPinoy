@@ -81,7 +81,7 @@ class OrderController extends Controller
         $entries = $request->get('entries', 5);
         $query = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request);
 
-        $orders = $query->paginate($entries);
+        $orders = $query->whereNotIn('status', ['refunded', 'refund_requested', 'refund_rejected'])->paginate($entries);
 
         return view('admin.view-orders', compact('orders'));
     }
@@ -91,7 +91,7 @@ class OrderController extends Controller
         $entries = $request->get('entries', 5);
         $query = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request);
 
-        $orders = $query->where('status', '!=', 'delivered')->paginate($entries);
+        $orders = $query->whereNotIn('status', ['delivered', 'refunded', 'refund_requested', 'refund_rejected'])->paginate($entries);
         $newOrdersCount = Order::where('status', 'pending')->count();
         $aprovedOrdersCount = Order::where('status', 'approved')->count();
         $readyToShipOrdersCount = Order::where('status', 'in progress')->count();
@@ -301,6 +301,106 @@ class OrderController extends Controller
         ));
     }
 
+    public function processRefunds(Request $request)
+    {
+        // Get entries for both tables
+        $pendingEntries = $request->get('pending_entries', 5);
+        $processedEntries = $request->get('processed_entries', 5);
+        
+        $query = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request, 'pending_search');
+        $processedQuery = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request, 'processed_search');
+
+        // Calculate refund statistics
+        $currentMonth = now()->startOfMonth();
+        $totalRefunds = Order::where('status', 'refunded')
+            ->whereMonth('updated_at', $currentMonth->month)
+            ->sum('total_amount');
+
+        $pendingRefunds = Order::where('status', 'refund_requested')->count();
+
+        $processedRefunds = Order::where('status', 'refunded')
+            ->whereMonth('updated_at', $currentMonth->month)
+            ->count();
+
+        // Calculate refund rate
+        $totalOrders = Order::whereMonth('created_at', $currentMonth->month)->count();
+        $refundRate = $totalOrders > 0 
+            ? ($processedRefunds / $totalOrders) * 100 
+            : 0;
+
+        // Get pending refund requests with its own page parameter
+        $orders = $query->where('status', 'refund_requested')
+            ->paginate($pendingEntries, ['*'], 'pending_page');
+
+        // Get processed refunds with its own page parameter
+        $processedOrders = $processedQuery->whereIn('status', ['refunded', 'refund_rejected'])
+            ->orderBy('updated_at', 'desc')
+            ->paginate($processedEntries, ['*'], 'processed_page');
+
+        return view('admin.process-refunds', compact(
+            'orders',
+            'processedOrders',
+            'totalRefunds',
+            'pendingRefunds',
+            'processedRefunds',
+            'refundRate'
+        ));
+    }
+    
+    public function approveRefund($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            
+            if ($order->status !== 'refund_requested') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order is not in refund requested status'
+                ], 400);
+            }
+            
+            $order->update([
+                'status' => 'refunded'
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Refund approved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error approving refund'
+            ], 500);
+        }
+    }
+
+    public function denyRefund($id)
+    {
+        try {
+            $order = Order::findOrFail($id);
+            
+            if ($order->status !== 'refund_requested') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Order is not in refund requested status'
+                ], 400);
+            }
+            
+            $order->update(['status' => 'refund_rejected']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Refund denied successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error denying refund'
+            ], 500);
+        }
+    }
+
     /**
      * Apply search filters to the query.
      *
@@ -308,10 +408,10 @@ class OrderController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function applySearchFilters($query, Request $request)
+    private function applySearchFilters($query, Request $request, $searchKey = 'search')
     {
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
+        if ($request->has($searchKey) && $request->get($searchKey) != '') {
+            $search = $request->get($searchKey);
             $query->where(function ($q) use ($search) {
                 $q->where('order_no', 'like', '%' . $search . '%')
                   ->orWhere('created_at', 'like', '%' . $search . '%')

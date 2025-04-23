@@ -1,4 +1,6 @@
 @php
+    use Illuminate\Support\Str;
+
     $colors = [
         'approved' => 'success',
         'pending' => 'warning text-dark',
@@ -6,9 +8,12 @@
         'delivered' => 'primary',
         'rejected' => 'danger',
         'canceled' => 'secondary',
+        'refunded' => 'dark',
+        'refund_requested' => 'dark',
+        'refund_rejected' => 'danger',
     ];
 @endphp
 
 <span class="badge bg-{{ $colors[$status] ?? 'secondary' }}">
-    {{ ucfirst($status) }}
+    {{ Str::of($status)->replace('_', ' ')->title() }}
 </span>

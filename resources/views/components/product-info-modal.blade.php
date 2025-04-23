@@ -32,13 +32,13 @@
         const paymentMethod = document.getElementById('modalPaymentMethod');
 
         // Set modal content
-        productImage.src = order.product.image
+        productImage.src = order.product?.image
             ? `{{ asset('storage/') }}/${order.product.image}` 
             : '{{ asset("storage/default-product.png") }}';
         orderNumber.textContent = `Order #: ${order.order_no}`;
-        productName.textContent = 'Product: ' + order.product.name;
-        productDescription.textContent = '- ' + (order.product.description ? order.product.description : 'No description available');
-        productPrice.textContent = `Price: ₱${parseFloat(order.product.price).toFixed(2)}`;
+        productName.textContent = 'Product: ' + order.product?.name;
+        productDescription.textContent = '- ' + (order.product?.description ? order.product.description : 'No description available');
+        productPrice.textContent = `Price: ₱${parseFloat(order.product?.price).toFixed(2)}`;
         productQuantity.textContent = order.quantity;
         paymentMethod.textContent = `Payment Method: ${order.payment_method ? order.payment_method.toUpperCase() : 'N/A'}`;
         // Show modal
