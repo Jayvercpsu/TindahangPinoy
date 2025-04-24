@@ -3,19 +3,30 @@
 @push('styles')
 <!-- Include DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<style>
+    .cart-icon:hover {
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+    }
+</style>
 @endpush
 
-@include('includes.navbar'); 
+@include('includes.navbar');
 @section('content')
 <div class="container">
-    <h2 class="my-5">Your Cart</h2>
+    <div class="my-5 d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Your Cart</h2>
+        <a href="{{ route('account.index') }}" class="text-decoration-none text-dark cart-icon">
+            <i class="fa fa-shopping-bag fa-2x"></i>
+        </a>
+    </div>
 
     @if(session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
     </div>
     @endif
-    
+
     @if(session('error'))
     <div class="alert alert-danger">
         {{ session('error') }}

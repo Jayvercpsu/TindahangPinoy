@@ -69,6 +69,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::post('/cart/buy-now', [CartController::class, 'buyNow'])->name('cart.buy-now');
     Route::post('/order/place', [OrderController::class, 'placeOrder'])->name('order.place');
+    Route::post('/orders/request-refund', [OrderController::class, 'requestRefund'])->name('orders.request-refund');
 });
 
 

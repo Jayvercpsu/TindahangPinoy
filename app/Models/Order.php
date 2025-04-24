@@ -17,6 +17,9 @@ class Order extends Model
         'quantity',
         'total_amount',
         'status',
+        'refund_no',
+        'refund_requested_date',
+        'refund_reason',
     ];
 
     public function product()

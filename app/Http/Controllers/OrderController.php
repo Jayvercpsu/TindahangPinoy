@@ -401,6 +401,42 @@ class OrderController extends Controller
         }
     }
 
+    public function requestRefund(Request $request)
+    {
+        try {
+            $request->validate([
+                'order_id' => 'required|exists:orders,id',
+                'refund_reason' => 'required|string|min:10',
+            ]);
+
+            $order = Order::findOrFail($request->order_id);
+
+            // Check if order is eligible for refund
+            if ($order->status !== 'delivered') {
+                return redirect()->back()->with('error', 'Only delivered orders can be refunded.');
+            }
+
+            if (in_array($order->status, ['refund_requested', 'refunded', 'refund_rejected'])) {
+                return redirect()->back()->with('error', 'This order already has a refund request.');
+            }
+
+            // Generate refund number
+            $refundNo = 'RFN-' . strtoupper(Str::random(10));
+
+            // Update order with refund details
+            $order->update([
+                'refund_no' => $refundNo,
+                'refund_requested_date' => now(),
+                'refund_reason' => $request->refund_reason,
+                'status' => 'refund_requested'
+            ]);
+
+            return redirect()->back()->with('success', 'Refund request submitted successfully! Your refund ID is: ' . $refundNo);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error submitting refund request. Please try again.');
+        }
+    }
+
     /**
      * Apply search filters to the query.
      *

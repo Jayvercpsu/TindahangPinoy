@@ -41,7 +41,11 @@ class AccountController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'phone' => ['required', 'string', 'regex:/^09\d{9}$/', 'size:11'],
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'phone.regex' => 'The phone number must start with 09 and contain 11 digits.',
+            'phone.size' => 'The phone number must be exactly 11 digits.',
         ]);
 
         if ($request->hasFile('profile_picture')) {
@@ -52,7 +56,7 @@ class AccountController extends Controller
             $user->profile_picture = basename($path);
         }
 
-        $user->update($request->only(['name', 'email']));
+        $user->update($request->only(['name', 'email', 'phone']));
 
         return back()->with('success', 'Profile updated successfully!');
     }
