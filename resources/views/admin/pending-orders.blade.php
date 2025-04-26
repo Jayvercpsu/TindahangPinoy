@@ -107,6 +107,7 @@
                                 'payment_method' => ucfirst($order->payment_method),
                                 'order_id' => $order->id,
                                 'product' => $order->product,
+                                'proof_of_payment' => $order->proof_of_payment,
                             ];
                         });
 
@@ -212,11 +213,6 @@
                     <form id="approveOrderForm">
                         @csrf
                         <input type="hidden" name="_method" value="PUT">
-                        <div class="mb-3">
-                            <label for="approveNotes" class="form-label">Notes (Optional)</label>
-                            <textarea class="form-control" id="approveNotes" name="notes" rows="3"
-                                placeholder="Add any special handling instructions..."></textarea>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -240,16 +236,6 @@
                     <form id="completeOrderForm">
                         @csrf
                         <input type="hidden" name="_method" value="PUT">
-                        <div class="mb-3">
-                            <label for="trackingNumber" class="form-label">Tracking Number (Optional)</label>
-                            <input type="text" class="form-control" id="trackingNumber" name="tracking_number"
-                                placeholder="Enter shipping tracking number...">
-                        </div>
-                        <div class="mb-3">
-                            <label for="completionNotes" class="form-label">Notes (Optional)</label>
-                            <textarea class="form-control" id="completionNotes" name="completion_notes" rows="3"
-                                placeholder="Add any completion notes..."></textarea>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">

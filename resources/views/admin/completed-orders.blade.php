@@ -58,8 +58,9 @@
                                 'created_at' => $order->created_at->format('Y-m-d'),
                                 'completed_at' => $order->updated_at->format('Y-m-d'),
                                 'total_amount' => '₱' . number_format($order->total_amount, 2),
-                                'payment_method' => ucfirst($order->payment_method),
+                                'payment_method' => strtoupper($order->payment_method),
                                 'product' => $order->product, // Pass product data
+                                'proof_of_payment' => $order->proof_of_payment,
                             ];
                         });
 

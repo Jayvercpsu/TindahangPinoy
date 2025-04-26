@@ -15,6 +15,11 @@
                 <p id="modalProductPrice" class="text-danger fw-bold"></p>
                  <p class="text-muted">Quantity: <span id="modalProductQuantity" class="fw-bold"></span></p>
                 <p id="modalPaymentMethod" class="text-muted"></p>
+                <!-- GCash Proof of Payment Section -->
+                <div id="gcashProof" class="mt-3" style="display: none;">
+                    <p class="text-muted">Proof of Payment:</p>
+                    <img id="gcashProofImage" src="" class="img-fluid rounded" alt="Proof of Payment" style="max-height: auto;width: 100%;">
+                </div>
             </div>
         </div>
     </div>
@@ -41,6 +46,17 @@
         productPrice.textContent = `Price: ₱${parseFloat(order.product?.price).toFixed(2)}`;
         productQuantity.textContent = order.quantity;
         paymentMethod.textContent = `Payment Method: ${order.payment_method ? order.payment_method.toUpperCase() : 'N/A'}`;
+
+        // Handle GCash proof of payment
+        const gcashProofSection = document.getElementById('gcashProof');
+        const gcashProofImage = document.getElementById('gcashProofImage');
+        if (order.payment_method?.toLowerCase() == 'gcash' && order.proof_of_payment) {
+            gcashProofSection.style.display = 'block';
+            gcashProofImage.src = `{{ asset('storage/') }}/${order.proof_of_payment}`;
+        } else {
+            gcashProofSection.style.display = 'none';
+        }
+
         // Show modal
         const bootstrapModal = new bootstrap.Modal(modal);
         bootstrapModal.show();

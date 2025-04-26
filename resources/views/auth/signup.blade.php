@@ -42,6 +42,23 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" 
+                               class="form-control" 
+                               id="phone" 
+                               name="phone" 
+                               pattern="09[0-9]{9}"
+                               maxlength="11"
+                               placeholder="09XXXXXXXXX"
+                               title="Please enter a valid Philippine phone number starting with 09"
+                               required>
+                        <div class="form-text">Enter a valid Philippine phone number (e.g., 09123456789)</div>
+                        @error('phone')
+                            <div class="text-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password" required>

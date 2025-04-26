@@ -49,33 +49,16 @@
                     <h3 class="card-title">User List</h3>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="usersTable" class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($users as $key => $user)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteUserModal"
-                                            onclick="setDeleteUser({{ $user->id }})">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-data-table 
+                        :headers="[
+                            'id' => '#',
+                            'name' => 'Name',
+                            'email' => 'Email'
+                        ]" 
+                        :rows="$rows" 
+                        :actions="$actions"
+                        route="{{ route('admin.all-users') }}"
+                    />
                 </div>
             </div>
 
@@ -129,18 +112,6 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
-    <!-- Initialize DataTable -->
-    <script>
-        $(document).ready(function() {
-            $('#usersTable').DataTable({
-                "paging": true, // Enable pagination
-                "searching": true, // Enable search filter
-                "ordering": true, // Enable column sorting
-                "info": true, // Show table info
-                "lengthMenu": [5, 10, 25, 50], // Define page length options
-            });
-        });
-    </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>

@@ -128,25 +128,97 @@
                 </div>
             </div>
 
-            <!-- Payment Method Distribution -->
-            <div class="row mt-4">
+            <!-- Payment Method Distribution (Full Width) -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Payment Method Distribution</h3>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-center">
+                        <div id="paymentMethodChart" style="max-width: 500px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Customers and Products Row -->
+            <div class="row g-4">
+                <!-- Top Customers -->
                 <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Payment Method Distribution</h3>
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">
+                                <i class="fas fa-users me-2"></i>Top Customers
+                            </h3>
                         </div>
                         <div class="card-body">
-                            <div id="paymentMethodChart" style="height: 300px;"></div>
+                            <div class="list-group">
+                                @forelse($topCustomers as $customer)
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ $customer->user->name }}</h6>
+                                        <small class="text-muted">
+                                            <i class="fas fa-shopping-bag me-1"></i>
+                                            {{ $customer->purchase_count }} orders
+                                        </small>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-primary rounded-pill me-2">
+                                            ₱{{ number_format($customer->total_spent, 2) }}
+                                        </span>
+                                        <button class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#viewCustomerModal{{ $customer->user->id }}">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                @include('components.customer-modal', ['customer' => $customer])
+                                @empty
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    No customer data available
+                                </div>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Top Products -->
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Top Customers</h3>
+                        <div class="card-header bg-success text-white">
+                            <h3 class="card-title">
+                                <i class="fas fa-box me-2"></i>Top Products
+                            </h3>
                         </div>
                         <div class="card-body">
-                            <ul class="list-group">
+                            <ul class="list-group list-group-flush">
+                                @forelse($topProducts as $product)
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ $product->product?->name }}</strong>
+                                        <div class="text-muted small">
+                                            Sold: {{ $product->total_quantity }} units
+                                            <span class="mx-1">•</span>
+                                            Orders: {{ $product->order_count }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="badge bg-success rounded-pill me-2">
+                                            ₱{{ number_format($product->total_revenue, 2) }}
+                                        </span>
+                                        <button class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#viewProductModal{{ $product->product_id }}">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </li>
+                                @include('components.product-modal', ['product' => $product])
+                                @empty
+                                <li class="list-group-item text-center">No product data available</li>
+                                @endforelse
                             </ul>
                         </div>
                     </div>
@@ -260,40 +332,31 @@
                 ),
                 chart: {
                     type: 'pie',
-                    width: '100%'
+                    height: 350
                 },
                 colors: ['#0d6efd', '#198754'],
                 responsive: [{
                     breakpoint: 480,
                     options: {
                         chart: {
-                            width: 200
+                            height: 280
                         },
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            offsetY: 5
                         }
                     }
-                }]
+                }],
+                legend: {
+                    position: 'bottom',
+                    horizontalAlign: 'center',
+                    floating: false,
+                    offsetY: 5
+                }
             };
 
             var paymentMethodChart = new ApexCharts(document.querySelector("#paymentMethodChart"), paymentMethodOptions);
             paymentMethodChart.render();
-
-            // Update top customers list
-            const topCustomers = @json($topCustomers);
-            const topCustomersHtml = topCustomers.length > 0 ?
-                topCustomers.map(customer => `
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>${customer.user.name}</strong>
-                            <div class="text-muted small">${customer.purchase_count} purchases</div>
-                        </div>
-                        <span class="badge bg-primary rounded-pill">₱${Number(customer.total_spent).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    </li>
-                `).join('') :
-                `<li class="list-group-item text-center">No customer data available</li>`;
-
-            document.querySelector('.list-group').innerHTML = topCustomersHtml;
         });
     </script>
 

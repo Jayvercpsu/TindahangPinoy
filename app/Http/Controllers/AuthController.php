@@ -30,6 +30,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'phone' => ['required', 'string', 'regex:/^09\d{9}$/', 'size:11'],
             'password' => [
                 'required',
                 'min:8',
@@ -40,7 +41,9 @@ class AuthController extends Controller
                 'confirmed'
             ],
         ], [
-            'password.regex' => 'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character (@, $, etc.).'
+            'password.regex' => 'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character (@, $, etc.).',
+            'phone.regex' => 'The phone number must start with 09 and contain 11 digits.',
+            'phone.size' => 'The phone number must be exactly 11 digits.',
         ]);
 
         try {
@@ -48,6 +51,7 @@ class AuthController extends Controller
             User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'phone' => $request->phone,
                 'password' => Hash::make($request->password),
             ]);
 

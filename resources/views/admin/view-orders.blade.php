@@ -97,6 +97,7 @@
                                 'status' => view('partials.order-status', ['status' => $order->status])->render(),
                                 'payment_method' => ucfirst($order->payment_method),
                                 'product' => $order->product,
+                                'proof_of_payment' => $order->proof_of_payment,
                             ];
                         })"
 

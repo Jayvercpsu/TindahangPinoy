@@ -46,48 +46,19 @@
                     <h3 class="card-title">Product List</h3>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="usersTable" class="table table-striped table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Image</th>
-                                    <th>Product Name</th>
-                                    <th>Description</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($products as $key => $product)
-                                <tr>
-                                    <td>{{ $key + 1 }}</td>
-                                    <td>
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="Product Image" width="60" height="60" class="rounded">
-                                    </td>
-                                    <td>{{ $product->name }}</td>
-                                    <td>{{ $product->description }}</td>
-                                    <td>₱{{ $product->price }}</td>
-                                    <td>{{ $product->stock }}</td>
-                                    <td>
-                                        <!-- Edit Button -->
-                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editProductModal"
-                                            onclick="editProduct({{ $product->id }}, '{{ $product->name }}', '{{ $product->description }}', '{{ $product->price }}', '{{ $product->stock }}', '{{ asset('storage/' . $product->image) }}')">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </button>
-
-                                        <!-- Delete Button -->
-                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProductModal"
-                                            onclick="setDeleteProduct({{ $product->id }})">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    <x-data-table 
+                        :headers="[
+                            'id' => '#',
+                            'image' => 'Image',
+                            'name' => 'Product Name',
+                            'description' => 'Description',
+                            'price' => 'Price',
+                            'stock' => 'Stock'
+                        ]" 
+                        :rows="$rows" 
+                        :actions="$actions"
+                        route="{{ route('admin.view-products') }}"
+                    />
                 </div>
             </div>
 

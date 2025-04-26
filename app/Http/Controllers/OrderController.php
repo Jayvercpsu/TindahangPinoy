@@ -277,12 +277,33 @@ class OrderController extends Controller
             if (!isset($paymentDistribution['gcash'])) $paymentDistribution['gcash'] = 0;
         }
 
-        // Use same query conditions for top customers
+        // Use same query conditions for top customers with payment method filter
         $topCustomers = clone $query;
         $topCustomers = $topCustomers->with('user')
+            ->when($request->filled('paymentMethod'), function($q) use ($request) {
+                $q->where('payment_method', strtolower($request->paymentMethod));
+            })
             ->select('user_id', DB::raw('COUNT(*) as purchase_count'), DB::raw('SUM(total_amount) as total_spent'))
             ->groupBy('user_id')
             ->orderBy('total_spent', 'desc')
+            ->limit(5)
+            ->get();
+
+        // Add top products query with payment method filter
+        $topProducts = Order::where('status', 'delivered')
+            ->whereBetween('updated_at', [$startDate, $endDate])
+            ->when($request->filled('paymentMethod'), function($q) use ($request) {
+                $q->where('payment_method', strtolower($request->paymentMethod));
+            })
+            ->select(
+                'product_id',
+                DB::raw('COUNT(*) as order_count'),
+                DB::raw('SUM(quantity) as total_quantity'),
+                DB::raw('SUM(total_amount) as total_revenue')
+            )
+            ->with('product')
+            ->groupBy('product_id')
+            ->orderBy('total_revenue', 'desc')
             ->limit(5)
             ->get();
 
@@ -296,6 +317,7 @@ class OrderController extends Controller
             'monthlySales',
             'paymentDistribution',
             'topCustomers',
+            'topProducts',
             'startDate',
             'endDate'
         ));
