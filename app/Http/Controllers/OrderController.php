@@ -287,7 +287,7 @@ class OrderController extends Controller
             ->get();
 
         // Rest of the code remains the same...
-        return view('admin.view-sales', compact(
+        return view('admin.analytics', compact(
             'orders',
             'currentMonthSales',
             'monthlyOrderCount',

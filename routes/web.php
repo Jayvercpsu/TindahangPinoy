@@ -100,10 +100,6 @@ Route::prefix('admin')->group(function () {
         Route::delete('/all-products/{id}', [ProductController::class, 'destroy'])->name('admin.delete-product');
         Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 
-        Route::get('/analytics', function () {
-            return view('admin.analytics');
-        })->name('admin.analytics');
-
         // Order Management Routes
         Route::get('/view-orders', [OrderController::class, 'viewOrders'])->name('admin.view-orders');
 
@@ -113,7 +109,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/process-refunds',  [OrderController::class, 'processRefunds'])->name('admin.process-refunds');
 
-        Route::get('/view-sales',  [OrderController::class, 'viewSales'])->name('admin.view-sales');
+        Route::get('/analytics',  [OrderController::class, 'viewSales'])->name('admin.analytics');
 
         Route::delete('/orders/{id}/delete', [OrderController::class, 'deleteOrder'])->name('admin.orders.delete');
         Route::get('/orders/{orderNo}/invoice', [OrderController::class, 'generateInvoice'])->name('admin.orders.invoice');

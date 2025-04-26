@@ -36,7 +36,6 @@
         <li>
             <a href="#" class="text-decoration-none"><i class='bx bxs-receipt icon'></i> Manage Transactions <i class='bx bx-chevron-right icon-right'></i></a>
             <ul class="side-dropdown">
-                <li><a href="{{ route('admin.view-sales') }}" class="{{ Route::currentRouteName() == 'admin.view-sales' ? 'active' : '' }} text-decoration-none"><i class='bx bx-show'></i> View Sales</a></li>
                 <li><a href="{{ route('admin.process-refunds') }}" class="{{ Route::currentRouteName() == 'admin.process-refunds' ? 'active' : '' }} text-decoration-none"><i class='bx bx-undo'></i> Process Refunds</a></li>
             </ul>
         </li>
