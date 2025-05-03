@@ -98,6 +98,8 @@
                                 'payment_method' => ucfirst($order->payment_method),
                                 'product' => $order->product,
                                 'proof_of_payment' => $order->proof_of_payment,
+                                'quantity' => $order->quantity, 
+                                'address' => $order->user->address,
                             ];
                         })"
 

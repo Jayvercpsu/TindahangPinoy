@@ -20,13 +20,22 @@
                     <p class="text-muted">Proof of Payment:</p>
                     <img id="gcashProofImage" src="" class="img-fluid rounded" alt="Proof of Payment" style="max-height: auto;width: 100%;">
                 </div>
+
+                <!-- Customer Info Section -->
+                <div id="customerInfoSection" style="display: none;">
+                    <div class="card mt-3">
+                        <div class="card-body">
+                            <p><i class="fas fa-shipping-fast me-2"></i><b>Ship to:</b> <span id="modalCustomerAddress"></span></p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function showProductInfoModal(order) {
+    function showProductInfoModal(order, showCustomerInfo = true) {
         const modal = document.getElementById('productInfoModal');
         const productImage = document.getElementById('modalProductImage');
         const orderNumber = document.getElementById('modalOrderNumber');
@@ -55,6 +64,15 @@
             gcashProofImage.src = `{{ asset('storage/') }}/${order.proof_of_payment}`;
         } else {
             gcashProofSection.style.display = 'none';
+        }
+
+        // Handle customer information
+        const customerInfoSection = document.getElementById('customerInfoSection');
+        if (showCustomerInfo && order?.address) {
+            customerInfoSection.style.display = 'block';
+            document.getElementById('modalCustomerAddress').textContent = order?.address ? `${order?.address?.address}, ${order?.address?.city}, ${order?.address?.state}, ${order?.address?.zip_code}` : 'N/A';
+        } else {
+            customerInfoSection.style.display = 'none';
         }
 
         // Show modal

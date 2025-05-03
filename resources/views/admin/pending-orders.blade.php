@@ -100,7 +100,7 @@
                                 'order_no' => $order->order_no,
                                 'name' => $order->user->name,
                                 'created_at' => $order->created_at->format('Y-m-d'),
-                                'total_amount' => '$' . number_format($order->total_amount, 2),
+                                'total_amount' => '₱' . number_format($order->total_amount, 2),
                                 'raw_status' => $order->status, // Add this line to include raw status
                                 'status' => view('partials.order-status', ['status' => $order->status])->render(),
                                 'waiting_time' => $order->created_at->diffForHumans(),
@@ -108,6 +108,8 @@
                                 'order_id' => $order->id,
                                 'product' => $order->product,
                                 'proof_of_payment' => $order->proof_of_payment,
+                                'quantity' => $order->quantity,
+                                'address' => $order->user->address,
                             ];
                         });
 

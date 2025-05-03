@@ -79,7 +79,7 @@ class OrderController extends Controller
     public function viewOrders(Request $request)
     {
         $entries = $request->get('entries', 5);
-        $query = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request);
+        $query = $this->applySearchFilters(Order::with(['user', 'user.address'])->orderBy('id', 'desc'), $request);
 
         $orders = $query->whereNotIn('status', ['refunded', 'refund_requested', 'refund_rejected'])->paginate($entries);
 
@@ -89,7 +89,7 @@ class OrderController extends Controller
     public function pendingOrders(Request $request)
     {
         $entries = $request->get('entries', 5);
-        $query = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request);
+        $query = $this->applySearchFilters(Order::with(['user', 'user.address'])->orderBy('id', 'desc'), $request);
 
         $orders = $query->whereNotIn('status', ['delivered', 'refunded', 'refund_requested', 'refund_rejected'])->paginate($entries);
         $newOrdersCount = Order::where('status', 'pending')->count();
@@ -103,7 +103,7 @@ class OrderController extends Controller
     public function completedOrders(Request $request)
     {
         $entries = $request->get('entries', 5);
-        $query = $this->applySearchFilters(Order::with('user')->orderBy('id', 'desc'), $request);
+        $query = $this->applySearchFilters(Order::with(['user', 'user.address'])->orderBy('id', 'desc'), $request);
 
         $orders = $query->where('status', 'delivered')->paginate($entries);
 

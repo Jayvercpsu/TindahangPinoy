@@ -61,6 +61,8 @@
                                 'payment_method' => strtoupper($order->payment_method),
                                 'product' => $order->product, // Pass product data
                                 'proof_of_payment' => $order->proof_of_payment,
+                                'quantity' => $order->quantity,
+                                'address' => $order->user->address,
                             ];
                         });
 
