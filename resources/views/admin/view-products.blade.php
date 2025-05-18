@@ -91,6 +91,26 @@
                                     <label for="editProductStock" class="form-label">Stock</label>
                                     <input type="number" class="form-control" id="editProductStock" name="stock" required>
                                 </div>
+                                <!-- restock level -->
+                                <div class="mb-3">
+                                    <label for="editProductRestockLevel" class="form-label">Restock Level</label>
+                                    <input type="number" class="form-control" id="editProductRestockLevel" name="restock_level" required>
+                                </div>
+                                <!-- category selections -->
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select name="category" class="form-select" id="editProductCategory" required>
+                                        <option value="" disabled selected>Select Category</option>
+                                            <option value="meal">meal</option>
+                                            <option value="snacks">snacks</option>
+                                            <option value="drinks">drinks</option>
+                                            <option value="desserts">desserts</option>
+                                            <option value="vegetables">vegetables</option>
+                                            <option value="fruits">fruits</option>
+                                            <option value="meat">meat</option>
+                                            <option value="others">others</option>
+                                    </select>
+                                </div>
                                 <div class="mb-3">
                                     <label for="editProductImage" class="form-label">Product Image</label>
                                     <input type="file" class="form-control" id="editProductImage" name="image">
@@ -109,12 +129,14 @@
 
             <!-- JavaScript for Editing Product -->
             <script>
-                function editProduct(id, name, description, price, stock, imageUrl) {
+                function editProduct(id, name, description, price, stock, imageUrl, category, restockLevel) {
                     document.getElementById("editProductId").value = id;
                     document.getElementById("editProductName").value = name;
                     document.getElementById("editProductDescription").value = description;
                     document.getElementById("editProductPrice").value = price;
                     document.getElementById("editProductStock").value = stock;
+                    document.getElementById("editProductRestockLevel").value = restockLevel;
+                    document.getElementById("editProductCategory").value = category;
                     document.getElementById("editProductImagePreview").src = imageUrl;
                 }
             </script>

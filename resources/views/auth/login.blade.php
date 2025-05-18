@@ -22,8 +22,8 @@
 
     <!-- Login & Sign Up Toggle Buttons -->
 <div class="d-flex justify-content-center mb-3">
-    <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a>
-    <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a>
+    {{-- <a href="{{ route('login') }}" class="btn btn-primary me-2">Log In</a> --}}
+    {{-- <a href="{{ route('signup') }}" class="btn btn-outline-primary">Sign Up</a> --}}
 </div>
         <div class="card">
             <div class="card-header text-center">Login to Your Account</div>

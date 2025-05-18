@@ -1,4 +1,4 @@
-<div class="modal fade" id="viewCustomerModal{{ $customer->user->id }}" tabindex="-1">
+<div class="modal fade" id="viewCustomerModal{{ $customer->user->id ?? '' }}" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
@@ -7,17 +7,17 @@
             </div>
             <div class="modal-body">
                 <div class="mx-auto mb-3" style="width: 150px; height: 150px; overflow: hidden; border-radius: 50%;">
-                    <img src="{{ $customer->user->profile_picture 
+                    <img src="{{ ($customer->user->profile_picture ?? '')
                         ? asset('storage/profile_images/' . $customer->user->profile_picture) 
                         : asset('images/default-profile.jpg') }}"
                         class="w-100 h-100" style="object-fit: cover;" alt="Profile Picture">
                 </div>
                 <div class="row">
                     <div class="col-12">
-                        <h4 class="text-center mb-3">{{ $customer->user->name }}</h4>
+                        <h4 class="text-center mb-3">{{ $customer->user->name ?? '' }}</h4>
                         <div class="card mb-3">
                             <div class="card-body">
-                                <p><i class="fas fa-envelope me-2"></i>{{ $customer->user->email }}</p>
+                                <p><i class="fas fa-envelope me-2"></i>{{ $customer->user->email ?? '' }}</p>
                                 <p><i class="fas fa-phone me-2"></i>{{ $customer->user->phone ?? 'N/A' }}</p>
                             </div>
                         </div>

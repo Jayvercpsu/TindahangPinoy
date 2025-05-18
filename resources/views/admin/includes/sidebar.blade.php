@@ -1,6 +1,6 @@
 <!-- SIDEBAR -->
 <section id="sidebar">
-    <a href="" class="brand text-decoration-none">
+    <a href="/" class="brand text-decoration-none">
         <i class="fas fa-store me-2"></i> Tindahang Pinoy
     </a>
     <ul class="side-menu">

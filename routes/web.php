@@ -8,10 +8,12 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AccountController;
 use App\Models\Order;
+
 
 // 🔹 Home Page
 // Route::get('/', function () {
@@ -67,11 +69,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     Route::get('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::post('/cart/buy-now', [CartController::class, 'buyNow'])->name('cart.buy-now');
     Route::post('/order/place', [OrderController::class, 'placeOrder'])->name('order.place');
     Route::post('/orders/request-refund', [OrderController::class, 'requestRefund'])->name('orders.request-refund');
 });
 
+// guest cart
+Route::post('/cart/buy-now', [CartController::class, 'buyNow'])->name('cart.buy-now');
 
 // 🔹 Admin Authentication
 Route::prefix('admin')->group(function () {
@@ -81,9 +84,7 @@ Route::prefix('admin')->group(function () {
 
     // 🔹 Protect Admin Routes
     Route::middleware(['auth:admin'])->group(function () {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
         // 🔹 All Users Route
         Route::get('/all-users', [UserController::class, 'index'])->name('admin.all-users');
@@ -117,5 +118,9 @@ Route::prefix('admin')->group(function () {
         Route::put('/orders/{id}/complete', [OrderController::class, 'completeOrder'])->name('admin.orders.complete');
         Route::post('/orders/{id}/approve-refund', [OrderController::class, 'approveRefund'])->name('admin.orders.approve-refund');
         Route::post('/orders/{id}/deny-refund', [OrderController::class, 'denyRefund'])->name('admin.orders.deny-refund');
+        Route::post('/restock-product', [ProductController::class, 'restock'])->name('admin.restock-product');
+
+        Route::get('/profile', [AdminAuthController::class, 'profile'])->name('admin.profile');
+        Route::post('/profile/update', [AdminAuthController::class, 'updateProfile'])->name('admin.profile.update');
     });
 });

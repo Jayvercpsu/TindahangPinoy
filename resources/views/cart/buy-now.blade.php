@@ -33,7 +33,7 @@
 
         <!-- 📍 Shipping Address -->
         <div class="col-md-6 section-spacing">
-            <h4 class="mb-3 text-center">📍 Shipping Address</h4>
+            <h4 class="mb-3 text-center">📍 Delivery Address</h4>
             <div class="address-card">
                 @if($address)
                 <div class="address-details">
@@ -63,8 +63,17 @@
                 <form action="{{ route('order.place') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="grand_total" value="{{ $grandTotal }}">
+                    <!-- for instant user order -->
+                    @if($cartItems[0]->instant_order)
+                    <input type="hidden" name="instant_order" value="{{ $cartItems[0]->instant_order }}">
+                    @endif
+
                     @foreach($cartItems as $item)
                         <input type="checkbox" name="selected_cart_items[]" value="{{ $item->id }}" class="d-none" checked>
+                        <!-- for instant user order -->
+                        @if($cartItems[0]->instant_order)
+                        <input type="checkbox" name="selected_product_quantities[]" value="{{ $item->quantity }}" class="d-none" checked>
+                        @endif
                     @endforeach
                     <div class="form-check mb-3">
                         <input class="form-check-input payment-method" type="radio" name="payment_method" value="cod" checked id="codPayment">

@@ -91,7 +91,7 @@
                                 'id' => $orders->firstItem() + $index,
                                 'order_no' => $order->order_no,
                                 'order_id' => $order->id,
-                                'name' => $order->user->name,
+                                'name' => $order->user->name ?? '(in person)',
                                 'created_at' => $order->created_at->format('Y-m-d'),
                                 'total_amount' => '₱' . number_format($order->total_amount, 2),
                                 'status' => view('partials.order-status', ['status' => $order->status])->render(),
@@ -99,7 +99,7 @@
                                 'product' => $order->product,
                                 'proof_of_payment' => $order->proof_of_payment,
                                 'quantity' => $order->quantity, 
-                                'address' => $order->user->address,
+                                'address' => $order->user->address ?? '',
                             ];
                         })"
 

@@ -54,7 +54,7 @@
                             return [
                                 'id' => $orders->firstItem() + $index,
                                 'order_no' => $order->order_no,
-                                'name' => $order->user->name,
+                                'name' => $order->user->name ?? '(in_person)',
                                 'created_at' => $order->created_at->format('Y-m-d'),
                                 'completed_at' => $order->updated_at->format('Y-m-d'),
                                 'total_amount' => '₱' . number_format($order->total_amount, 2),
@@ -62,7 +62,7 @@
                                 'product' => $order->product, // Pass product data
                                 'proof_of_payment' => $order->proof_of_payment,
                                 'quantity' => $order->quantity,
-                                'address' => $order->user->address,
+                                'address' => $order->user->address ?? '',
                             ];
                         });
 

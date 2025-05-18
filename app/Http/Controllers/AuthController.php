@@ -85,6 +85,11 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+        // check if the user is logged in as admin
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
+
         if (Auth::attempt($credentials, $request->has('remember'))) {
             $request->session()->regenerate();
             return redirect()->route('index')->with('success', 'Welcome back!');

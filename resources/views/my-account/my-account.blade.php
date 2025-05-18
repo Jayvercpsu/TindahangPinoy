@@ -15,6 +15,12 @@
 <body>
 
 <div class="container-fluid">
+        @if(session('error'))
+            <div class="alert alert-danger mt-3">
+                {{ session('error') }}
+            </div>
+        @endif
+
     <div class="row">
 
         @include('my-account.includes.sidebar')

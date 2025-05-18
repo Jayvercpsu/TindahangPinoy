@@ -99,6 +99,8 @@
                                 <option value="">All Methods</option>
                                 <option value="cod" {{ request('paymentMethod') == 'cod' ? 'selected' : '' }}>COD (CASH ON DELIVERY)</option>
                                 <option value="gcash" {{ request('paymentMethod') == 'gcash' ? 'selected' : '' }}>GCASH (QR CODE)</option>
+                                <!-- cash -->
+                                <option value="cash" {{ request('paymentMethod') == 'cash' ? 'selected' : '' }}>CASH</option>
                             </select>
                         </div>
                         <!-- <div class="col-md-3">
@@ -155,7 +157,7 @@
                                 @forelse($topCustomers as $customer)
                                 <div class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <h6 class="mb-1">{{ $customer->user->name }}</h6>
+                                        <h6 class="mb-1">{{ $customer->user->name ?? '' }}</h6>
                                         <small class="text-muted">
                                             <i class="fas fa-shopping-bag me-1"></i>
                                             {{ $customer->purchase_count }} orders
@@ -167,7 +169,7 @@
                                         </span>
                                         <button class="btn btn-primary btn-sm"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#viewCustomerModal{{ $customer->user->id }}">
+                                            data-bs-target="#viewCustomerModal{{ $customer->user->id ?? '' }}">
                                             <i class="fa fa-eye"></i>
                                         </button>
                                     </div>
@@ -324,17 +326,32 @@
 
             // Payment Method Chart
             var paymentData = @json($paymentDistribution);
+            var totalPayment = Object.values(paymentData).reduce((a, b) => a + b, 0);
             var paymentMethodOptions = {
                 series: Object.values(paymentData),
-                labels: Object.keys(paymentData).map(method =>
-                    method === 'cod' ? 'Cash on Delivery (COD) - ' + (paymentData[method] === 0 ? '0%' : ((paymentData[method] / Object.values(paymentData).reduce((a, b) => a + b, 0)) * 100).toFixed(1) + '%') :
-                    'GCASH (QR) - ' + (paymentData[method] === 0 ? '0%' : ((paymentData[method] / Object.values(paymentData).reduce((a, b) => a + b, 0)) * 100).toFixed(1) + '%')
-                ),
+                labels: Object.entries(paymentData).map(([method, value]) => {
+                    let percentage = totalPayment === 0 ? 0 : ((value / totalPayment) * 100).toFixed(1);
+                    let label = '';
+
+                    switch (method) {
+                        case 'cod':
+                            label = `Cash on Delivery (COD) - ${percentage}%`;
+                            break;
+                        case 'gcash':
+                            label = `GCASH (QR) - ${percentage}%`;
+                            break;
+                        case 'cash':
+                            label = `${method.toUpperCase()} - ${percentage}%`;
+                            break;
+                    }
+
+                    return label;
+                }),
                 chart: {
                     type: 'pie',
                     height: 350
                 },
-                colors: ['#0d6efd', '#198754'],
+                colors: ['#0d6efd', '#198754', '#6c757d'],
                 responsive: [{
                     breakpoint: 480,
                     options: {

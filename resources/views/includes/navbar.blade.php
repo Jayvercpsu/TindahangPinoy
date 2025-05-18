@@ -5,10 +5,8 @@
             <i class="fas fa-store me-2"></i> Tindahang Pinoy
         </a>
 
-
-        <!-- Mobile Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- Mobile Toggle Button (JS-based) -->
+        <button class="navbar-toggler" type="button" id="customNavbarToggler" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -18,14 +16,14 @@
                 <!-- Left Menu -->
                 <ul class="navbar-nav text-center text-md-start">
                     <!-- <li class="nav-item"><a class="nav-link" href="{{ route('index') }}">Home</a></li> -->
-                    <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="{{ route('product') }}">Product</a></li> -->
                     <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
                 </ul>
 
                 <!-- Cart & User Profile -->
                 <div class="d-flex align-items-center mt-3 mt-md-0">
                     <!-- Cart -->
-                    <a class="btn btn-success btn-sm me-2" href="{{ route('cart.index') }}">
+                    <a class="btn btn-success btn-sm me-2 d-none" href="{{ route('cart.index') }}">
                         <i class="fa fa-shopping-cart"></i> Cart
                         <span class="badge badge-light cart-count">
                             {{ auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->distinct('product_id')->count() : 0 }}
@@ -58,7 +56,16 @@
                     </div>
 
                     @else
-                    <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
+                        <!-- check if admin -->
+                        @if(Auth::guard('admin')->check())
+                        <a class="btn btn-outline-light btn-sm me-2" href="{{ route('admin.dashboard') }}">
+                            <i class="fa fa-user-shield"></i> Admin
+                        </a>
+                        @else
+                        <!-- Login & Sign Up Buttons -->
+                        <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm me-2">Log In</a>
+                        <a href="{{ route('signup') }}" class="btn btn-primary btn-sm">Sign Up</a>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -93,27 +100,52 @@
 <!-- Bootstrap JS (Ensure it's included) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    $(document).on('click', '.add-to-cart-btn', function(e) {
-        e.preventDefault();
+    // $(document).on('click', '.add-to-cart-btn', function(e) {
+    //     e.preventDefault();
 
-        let productId = $(this).data('id'); // Get product ID
+    //     let productId = $(this).data('id'); // Get product ID
 
-        $.ajax({
-            url: "{{ route('cart.add') }}",
-            method: "POST",
-            data: {
-                product_id: productId,
-                _token: "{{ csrf_token() }}"
-            },
-            success: function(response) {
-                if (response.success) {
-                    $(".cart-count").text(response.cart_count); // Update cart count to show unique products
-                    alert(response.message);
-                }
-            },
-            error: function() {
-                alert("Error adding to cart.");
-            }
-        });
+    //     $.ajax({
+    //         url: "{{ route('cart.add') }}",
+    //         method: "POST",
+    //         data: {
+    //             product_id: productId,
+    //             _token: "{{ csrf_token() }}"
+    //         },
+    //         success: function(response) {
+    //             if (response.success) {
+    //                 $(".cart-count").text(response.cart_count); // Update cart count to show unique products
+    //                 alert(response.message);
+    //             }
+    //         },
+    //         error: function() {
+    //             alert("Error adding to cart.");
+    //         }
+    //     });
+    // });
+
+    // Custom JS toggle for mobile navbar
+    document.addEventListener('DOMContentLoaded', function() {
+        var toggler = document.getElementById('customNavbarToggler');
+        var navbarContent = document.getElementById('navbarContent');
+
+        if (toggler && navbarContent) {
+            toggler.addEventListener('click', function() {
+                navbarContent.classList.toggle('show');
+                // Update aria-expanded for accessibility
+                var expanded = toggler.getAttribute('aria-expanded') === 'true';
+                toggler.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            });
+
+            // Optional: close navbar when a nav-link is clicked (for single page apps)
+            navbarContent.querySelectorAll('.nav-link').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 768 && navbarContent.classList.contains('show')) {
+                        navbarContent.classList.remove('show');
+                        toggler.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        }
     });
 </script>

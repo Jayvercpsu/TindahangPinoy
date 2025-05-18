@@ -64,6 +64,27 @@
                             <label class="form-label">Stock</label>
                             <input type="number" name="stock" class="form-control" required>
                         </div>
+                        <!-- restock level -->
+                        <div class="mb-3">
+                            <label class="form-label">Restock Level</label>
+                            <input type="number" name="restock_level" class="form-control" required>
+                        </div>
+                        
+                        <!-- category selections -->
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select" required>
+                                <option value="" disabled selected>Select Category</option>
+                                    <option value="meal">meal</option>
+                                    <option value="snacks">snacks</option>
+                                    <option value="drinks">drinks</option>
+                                    <option value="desserts">desserts</option>
+                                    <option value="vegetables">vegetables</option>
+                                    <option value="fruits">fruits</option>
+                                    <option value="meat">meat</option>
+                                    <option value="others">others</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Product Image</label>
                             <input type="file" name="image" class="form-control" id="imageInput">

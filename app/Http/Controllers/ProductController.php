@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\InventoryHistory;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     public function index()
     {
-        // Fetch all products from the database
-        $products = Product::all();
-
-        // Pass products to the view
+        $products = Product::orderBy('created_at', 'desc')->paginate(8);
         return view('product', compact('products'));
     }
 
@@ -24,6 +22,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:1',
+            'restock_level' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:10240', // 10MB limit
         ]);
 
@@ -36,7 +35,9 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'stock' => $request->stock,
-            'image' => $imagePath
+            'restock_level' => $request->restock_level,
+            'image' => $imagePath,
+            'category' => $request->category,
         ]);
 
         return redirect()->route('admin.add-product')->with('success', 'Product added successfully!');
@@ -49,6 +50,7 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:1',
+            'restock_level' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // 10MB limit
         ]);
 
@@ -58,6 +60,8 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'stock' => $request->stock,
+            'restock_level' => $request->restock_level,
+            'category' => $request->category,
             'image' => $request->hasFile('image')
                 ? $request->file('image')->store('products', 'public')
                 : $product->image
@@ -87,30 +91,73 @@ class ProductController extends Controller
 
         return redirect()->route('admin.view-products')->with('success', 'Product and image deleted successfully.');
     }
+
     public function show($id)
-{
-    $product = Product::find($id);
+    {
+        $product = Product::find($id);
 
-    if (!$product) {
-        return redirect()->route('product')->with('error', 'Product not found.');
+        if (!$product) {
+            return redirect()->route('product')->with('error', 'Product not found.');
+        }
+
+        return view('product.show', compact('product'));
     }
-
-    return view('product.show', compact('product'));
-}
-
-    
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $query = Product::query();
 
-        $products = Product::where('name', 'LIKE', "%{$query}%")
-            ->orWhere('description', 'LIKE', "%{$query}%")
-            ->orWhere('price', 'LIKE', "%{$query}%")
-            ->get();
+        // Filter by category if provided
+        if (!empty($request->input('category'))) {
+            $query->where('category', 'LIKE', "%{$request->input('category')}%");
+        }
 
+        // Apply search filters if a query is provided
+        if (!empty($request->input('query'))) {
+            $searchTerm = $request->input('query');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('description', 'LIKE', "%{$searchTerm}%")
+                ->orWhere('price', 'LIKE', "%{$searchTerm}%");
+            });
+        }
+
+        // Get the filtered results
+        $products = $query->orderBy('created_at', 'desc')->paginate(8);
+
+        // Get latest products
         $latestProducts = Product::latest()->take(5)->get();
 
         return view('index', compact('products', 'latestProducts'));
+    }
+
+    public function restock(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'purchase_price' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string'
+    ]);
+
+        $product = Product::findOrFail($request->product_id);
+        
+        // Record inventory history
+        InventoryHistory::create([
+            'product_id' => $product->id,
+            'quantity_before' => $product->stock,
+            'quantity_after' => $product->stock + $request->quantity,
+            'purchase_price_before' => $product->price,
+            'purchase_price_after' => $request->purchase_price ?? $product->price,
+            'type' => 'restock',
+            'notes' => $request->notes
+        ]);
+
+        // Update product stock and purchase price
+        $product->stock += $request->quantity;
+        $product->price = $request->purchase_price ?? $product->price;
+        $product->save();
+
+        return redirect()->back()->with('success', 'Product restocked successfully!');
     }
 }

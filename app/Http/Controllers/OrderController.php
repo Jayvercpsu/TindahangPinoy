@@ -22,15 +22,30 @@ class OrderController extends Controller
             'selected_cart_items' => 'required|array',
         ]);
 
+        $isInstantOrder = isset($request->instant_order) && $request->instant_order;
+        $selectedProductQuantities = $request->selected_product_quantities;
+        $selectedCartItems = $request->selected_cart_items;
+
+        $orderNo = strtoupper(Str::random(15));
         $productNameErrors = [];
-        foreach ($request->selected_cart_items as $cartItemId) {
-            $cartItem = Cart::find($cartItemId);
-            if ($cartItem) {
-                $product = Product::find($cartItem->product_id);
-                if ($product && $product->stock < $cartItem->quantity) {
-                    $productNameErrors[] = $product->name;
+
+        foreach ($selectedCartItems as $index => $cartItemId) {
+            if ($isInstantOrder) {
+                // the cart item ID is product ID
+                $product = Product::find($cartItemId);
+                    if ($product && $product->stock < $selectedProductQuantities[$index]) {
+                        $productNameErrors[] = $product->name;
+                    }
+            } else {
+                // the cart item ID is order ID
+                $cartItem = Cart::find($cartItemId);
+                if ($cartItem) {
+                    $product = Product::find($cartItem->product_id);
+                    if ($product && $product->stock < $cartItem->quantity) {
+                        $productNameErrors[] = $product->name;
+                    }
                 }
-            }
+            }   
         }
 
         if (!empty($productNameErrors)) {
@@ -43,35 +58,53 @@ class OrderController extends Controller
             $proofOfPaymentPath = $request->file('proof_of_payment')->store('proof_of_payments', 'public');
         }
 
-        $selectedCartItems = $request->selected_cart_items;
-
-        $orderNo = strtoupper(Str::random(15));
-    
-        foreach ($selectedCartItems as $cartItemId) {
-            $cartItem = Cart::find($cartItemId);
-            if ($cartItem) {
+        foreach ($selectedCartItems as $index => $cartItemId) {
+            if ($isInstantOrder) {  
                 Order::create([
                     'user_id' => Auth::id(),
                     'order_no' => $orderNo,
-                    'product_id' => $cartItem->product_id,
+                    'product_id' => $cartItemId,
                     'payment_method' => $request->payment_method,
                     'proof_of_payment' => $proofOfPaymentPath,
-                    'quantity' => $cartItem->quantity,
-                    'total_amount' => $cartItem->product->price * $cartItem->quantity,
+                    'quantity' => $selectedProductQuantities[$index],
+                    'total_amount' => Product::find($cartItemId)->price * $selectedProductQuantities[$index],
                     'status' => 'pending',
                 ]);
-
-                $product = Product::find($cartItem->product_id);
+                 
+                // the cart item ID is product ID
+                $product = Product::find($cartItemId);
                 if ($product) {
-                    $product->stock -= $cartItem->quantity;
+                    $product->stock -= $selectedProductQuantities[$index];
                     $product->save();
+                }
+            } else {
+                $cartItem = Cart::find($cartItemId);
+                if ($cartItem) {
+                    Order::create([
+                        'user_id' => Auth::id(),
+                        'order_no' => $orderNo,
+                        'product_id' => $cartItem->product_id,
+                        'payment_method' => $request->payment_method,
+                        'proof_of_payment' => $proofOfPaymentPath,
+                        'quantity' => $cartItem->quantity,
+                        'total_amount' => $cartItem->product->price * $cartItem->quantity,
+                        'status' => 'pending',
+                    ]);
+
+                    $product = Product::find($cartItem->product_id);
+                    if ($product) {
+                        $product->stock -= $cartItem->quantity;
+                        $product->save();
+                    }
                 }
             }
         }
 
-        Cart::where('user_id', Auth::id())
+        if (!$isInstantOrder) {
+            Cart::where('user_id', Auth::id())
             ->whereIn('id', $selectedCartItems)
             ->delete();
+        }
 
         return redirect()->route('cart.index')->with('success', 'Order placed successfully!');
     }

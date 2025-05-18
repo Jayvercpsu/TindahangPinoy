@@ -50,7 +50,7 @@ class AdminController extends Controller
                     return '<div class="d-flex align-items-center gap-1">
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" 
                                 data-bs-target="#editProductModal" 
-                                onclick="editProduct(' . $product->id . ', \'' . addslashes($product->name) . '\', \'' . addslashes($product->description) . '\', ' . $product->price . ', ' . $product->stock . ', \'' . asset('storage/' . $product->image) . '\')">
+                                onclick="editProduct(' . $product->id . ', \'' . addslashes($product->name) . '\', \'' . addslashes($product->description) . '\', ' . $product->price . ', ' . $product->stock . ', \'' . asset('storage/' . $product->image) . '\', \'' . $product->category . '\', \'' . $product->restock_level . '\')">
                                 <i class="fa fa-edit"></i><span class="d-none d-sm-inline ms-1">Edit</span>
                             </button>
                             <button class="btn btn-danger btn-sm" data-bs-toggle="modal" 

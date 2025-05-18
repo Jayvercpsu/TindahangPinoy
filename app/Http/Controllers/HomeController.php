@@ -15,7 +15,7 @@ class HomeController extends Controller
             return $q->where('name', 'LIKE', "%{$query}%")
                      ->orWhere('description', 'LIKE', "%{$query}%")
                      ->orWhere('price', 'LIKE', "%{$query}%");
-        })->latest()->get(); // Removed pagination
+        })->latest()->paginate(8); // Removed pagination
     
         $latestProducts = Product::latest()->take(5)->get();
      
