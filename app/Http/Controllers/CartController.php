@@ -180,7 +180,7 @@ class CartController extends Controller
                 return redirect()->back()->with('success', 'Order placed successfully!')->with('order_no', $orderNo);
             }
 
-            $address = auth()->user()->address;
+            $address = auth()->user()->address ?? "";
             return view('cart.buy-now', compact('cartItems', 'address'));
         }
 
