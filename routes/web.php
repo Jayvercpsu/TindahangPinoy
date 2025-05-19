@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AccountController;
 use App\Models\Order;
+use App\Http\Middleware\UserAdmin;
 
 
 // 🔹 Home Page
@@ -49,9 +50,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/my-account/addresses/storeOrUpdate', [AccountController::class, 'storeOrUpdateAddress'])->name('addresses.storeOrUpdate');
 });
 
-
-
-
 // 🔹 User Authentication
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
 Route::post('/signup', [AuthController::class, 'signup'])->name('signup.submit');
@@ -74,7 +72,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // guest cart
-Route::post('/cart/buy-now', [CartController::class, 'buyNow'])->name('cart.buy-now');
+Route::post('/cart/buy-now', [CartController::class, 'buyNow'])->name('cart.buy-now')->middleware(UserAdmin::class);
 
 // 🔹 Admin Authentication
 Route::prefix('admin')->group(function () {

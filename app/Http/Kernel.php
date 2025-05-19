@@ -36,6 +36,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'user_admin' => \App\Http\Middleware\UserAdmin::class,
         'pwa' => \SilvioLeite\LaravelPwa\Http\Middleware\LaravelPwa::class, // ✅ Laravel PWA Middleware
     ];
 }
