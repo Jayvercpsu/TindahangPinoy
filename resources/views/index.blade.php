@@ -158,6 +158,56 @@
 
     @media (max-width: 768px) {
         .categories-sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            z-index: 1040;
+            transition: left 0.3s ease;
+            background: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .categories-sidebar.active {
+            left: 0;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            right: -350px;
+            top: 0;
+            bottom: 0;
+            width: 350px;
+            transition: right 0.3s ease;
+            z-index: 1040;
+            background: #fff;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.active {
+            right: 0;
+        }
+
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1030;
+        }
+
+        .sidebar-backdrop.active {
+            display: block;
+        }
+
+        .categories-sidebar {
             width: 80px;
         }
 
@@ -166,21 +216,48 @@
             font-size: 0.8rem;
         }
 
-        .cart-sidebar {
-            position: fixed;
-            right: -350px;
-            top: 0;
-            bottom: 0;
-            transition: right 0.3s ease;
-            z-index: 1001;
-        }
-
-        .cart-sidebar.active {
-            right: 0;
-        }
-
         .products-grid {
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+
+        .product-card {
+            max-width: 100%;
+        }
+
+        .product-info {
+            padding: 0.5rem;
+        }
+
+        .product-name {
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-price {
+            font-size: 0.85rem;
+        }
+
+        .btn-add-cart {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+         .modal-dialog {
+            margin: 0;
+            max-width: 100%;
+            height: 100vh;
+        }
+
+        .modal-content {
+            height: 100%;
+            border: 0;
+            border-radius: 0;
+        }
+
+        .modal-body {
+            overflow-y: auto;
         }
     }
 </style>
@@ -231,7 +308,7 @@
                 </div>
                 <div class="col-md-4 col-6 text-end">
                     <a 
-                        href="{{ auth()->guard('admin')->check() ? 'javascript:void(0)' : (auth()->check() ? route('cart.index') : route('login')) }}" 
+                        href="javascript:void(0);" 
                         class="text-decoration-none"
                         style="{{ auth()->guard('admin')->check() ? 'pointer-events: none; cursor: default; color: #6c757d; text-decoration: none;' : 'cursor: pointer' }}"
                     >
@@ -711,11 +788,6 @@
 
         // Toggle checkout button
         document.getElementById('checkoutBtn').disabled = cartItems.length === 0;
-
-        // Show cart sidebar on mobile after adding item
-        if (window.innerWidth < 768) {
-            document.querySelector('.cart-sidebar').classList.add('active');
-        }
     }
 
     // Initialize empty cart
@@ -1169,4 +1241,61 @@
     `);
         receiptWindow.document.close();
     });
+</script>
+
+<!-- Add backdrop div -->
+<div class="sidebar-backdrop"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryToggle = document.getElementById('categoryToggle');
+    const cartToggles = document.querySelectorAll('.cart-toggle');
+    const categorySidebar = document.querySelector('.categories-sidebar');
+    const cartSidebar = document.querySelector('.cart-sidebar');
+    const backdrop = document.querySelector('.sidebar-backdrop');
+
+    // Category sidebar toggle
+    categoryToggle.addEventListener('click', () => {
+        categorySidebar.classList.toggle('active');
+        backdrop.classList.toggle('active');
+        cartSidebar.classList.remove('active');
+    });
+
+    // Cart sidebar toggle
+    cartToggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            cartSidebar.classList.toggle('active');
+            backdrop.classList.toggle('active');
+            categorySidebar.classList.remove('active');
+        });
+    });
+
+    // Close sidebars when clicking backdrop
+    backdrop.addEventListener('click', () => {
+        categorySidebar.classList.remove('active');
+        cartSidebar.classList.remove('active');
+        backdrop.classList.remove('active');
+    });
+
+    // Close sidebars when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!categorySidebar.contains(e.target) && 
+            !cartSidebar.contains(e.target) &&
+            !e.target.matches('#categoryToggle') &&
+            !e.target.matches('.cart-toggle')) {
+            categorySidebar.classList.remove('active');
+            cartSidebar.classList.remove('active');
+            backdrop.classList.remove('active');
+        }
+    });
+
+    // Close sidebars on window resize to desktop
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+            categorySidebar.classList.remove('active');
+            cartSidebar.classList.remove('active');
+            backdrop.classList.remove('active');
+        }
+    });
+});
 </script>

@@ -29,6 +29,11 @@
                 <i class="fa fa-shopping-bag"></i> Orders List
                 <span class="badge bg-secondary">{{ Auth::user()->orders->count() ?? 0 }}</span>
             </a>
+            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {{ request()->routeIs('cart.index') ? 'active' : '' }}"
+               href="{{ route('cart.index') }}">
+                <i class="fa fa-shopping-cart"></i> Saved Cart
+                <span class="badge bg-secondary">{{ \App\Models\Cart::where('user_id', auth()->id())->count() ?? 0 }}</span>
+            </a>
             <a class="list-group-item list-group-item-action {{ request()->routeIs('account.profileSettings') ? 'active' : '' }}"
                href="{{ route('account.profileSettings') }}">
                 <i class="fa fa-user"></i> Profile Settings

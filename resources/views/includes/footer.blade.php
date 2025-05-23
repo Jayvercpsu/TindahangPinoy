@@ -1,4 +1,4 @@
-    <!-- Font Awesome CDN -->
+<!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 
@@ -27,22 +27,22 @@
                         <!-- Contact Information -->
                         <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
                             <h5 class="text-uppercase mb-4 pb-1">Contact Information</h5>
-                            <ul class="fa-ul" style="margin-left: 1.65em;">
-                                <li class="mb-3">
-                                    <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span>
-                                    <span class="ms-2">123 Mabini St, Manila, Philippines</span>
+                            <ul class="list-unstyled">
+                                <li class="mb-3 d-flex align-items-center justify-content-center justify-content-lg-start">
+                                    <i class="fas fa-map-marker-alt me-3"></i>
+                                    <span>123 Mabini St, Manila, Philippines</span>
                                 </li>
-                                <li class="mb-3">
-                                    <span class="fa-li"><i class="fas fa-envelope"></i></span>
-                                    <span class="ms-2">support@tindahangpinoy.com</span>
+                                <li class="mb-3 d-flex align-items-center justify-content-center justify-content-lg-start">
+                                    <i class="fas fa-envelope me-3"></i>
+                                    <span class="text-break">support@tindahangpinoy.com</span>
                                 </li>
-                                <li class="mb-3">
-                                    <span class="fa-li"><i class="fas fa-phone"></i></span>
-                                    <span class="ms-2">+63 912 345 6789</span>
+                                <li class="mb-3 d-flex align-items-center justify-content-center justify-content-lg-start">
+                                    <i class="fas fa-phone me-3"></i>
+                                    <span>+63 912 345 6789</span>
                                 </li>
-                                <li class="mb-3">
-                                    <span class="fa-li"><i class="fas fa-clock"></i></span>
-                                    <span class="ms-2">Mon-Sat: 8:00 AM - 9:00 PM</span>
+                                <li class="mb-3 d-flex align-items-center justify-content-center justify-content-lg-start">
+                                    <i class="fas fa-clock me-3"></i>
+                                    <span>Mon-Sat: 8:00 AM - 9:00 PM</span>
                                 </li>
                             </ul>
                         </div>

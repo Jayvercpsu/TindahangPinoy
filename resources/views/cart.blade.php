@@ -8,6 +8,80 @@
         opacity: 0.8;
         transition: opacity 0.3s ease;
     }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        .table-responsive {
+            border: 0;
+        }
+
+        #cartTable {
+            display: block;
+        }
+
+        #cartTable thead {
+            display: none;
+        }
+
+        #cartTable tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+
+        #cartTable tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border: none;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        #cartTable tbody td:last-child {
+            border-bottom: 0;
+        }
+
+        #cartTable tbody td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+
+        .quantity-input {
+            width: 100px;
+        }
+
+        #cartTable tfoot {
+            display: block;
+        }
+
+        #cartTable tfoot tr {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 1rem;
+        }
+
+        #cartTable tfoot td {
+            border: none;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            float: none;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        .clear-cart-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+    }
 </style>
 @endpush
 
@@ -61,42 +135,44 @@
                 $totalPrice = $item->quantity * $item->product->price;
                 $grandTotal += $totalPrice;
                 $isDisabled = $item->product->stock <= 0 || $item->quantity > $item->product->stock;
-                    @endphp
-                    <tr>
-                        <td>
-                            <input type="checkbox" class="item-checkbox" data-price="{{ $totalPrice }}"
-                                {{ $isDisabled ? 'disabled' : '' }}>
-                        </td>
-                        <td>
-                            <img src="{{ asset('storage/' . $item->product->image) }}" class="img-thumbnail" width="50">
-                        </td>
-                        <td>{{ $item->product->name }}</td>
-                        <td>
-                            <strong class="stock-indicator text-success">
-                                {{ $item->product->stock }}
-                            </strong>
-                        </td>
-                        <td>₱{{ number_format($item->product->price, 2) }}</td>
-                        <td>
-                            <input type="number" class="form-control quantity-input"
-                                data-id="{{ $item->id }}"
-                                data-price="{{ $item->product->price }}"
-                                data-stock="{{ $item->product->stock }}"
-                                value="{{ $item->quantity }}"
-                                min="1">
-                        </td>
-                        <td><strong>₱{{ number_format($totalPrice, 2) }}</strong></td>
-                        <td>
-                            <button class="btn btn-danger btn-sm delete-btn"
-                                data-id="{{ $item->id }}"
-                                data-name="{{ $item->product->name }}"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteConfirmModal">
-                                <i class="bi bi-trash"></i> Remove
-                            </button>
-                        </td>
-                    </tr>
-                    @endforeach
+                @endphp
+                <tr>
+                    <td data-label="Select">
+                        <input type="checkbox" class="item-checkbox" data-price="{{ $totalPrice }}"
+                            {{ $isDisabled ? 'disabled' : '' }}>
+                    </td>
+                    <td data-label="Image">
+                        <img src="{{ asset('storage/' . $item->product->image) }}" class="img-thumbnail" width="50">
+                    </td>
+                    <td data-label="Product">{{ $item->product->name }}</td>
+                    <td data-label="Stock">
+                        <strong class="stock-indicator text-success">
+                            {{ $item->product->stock }}
+                        </strong>
+                    </td>
+                    <td data-label="Price">₱{{ number_format($item->product->price, 2) }}</td>
+                    <td data-label="Quantity">
+                        <input type="number" class="form-control quantity-input"
+                            data-id="{{ $item->id }}"
+                            data-price="{{ $item->product->price }}"
+                            data-stock="{{ $item->product->stock }}"
+                            value="{{ $item->quantity }}"
+                            min="1">
+                    </td>
+                    <td data-label="Total">
+                        <strong>₱{{ number_format($totalPrice, 2) }}</strong>
+                    </td>
+                    <td data-label="Action">
+                        <button class="btn btn-danger btn-sm delete-btn"
+                            data-id="{{ $item->id }}"
+                            data-name="{{ $item->product->name }}"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteConfirmModal">
+                            <i class="bi bi-trash"></i> Remove
+                        </button>
+                    </td>
+                </tr>
+                @endforeach
             </tbody>
             <tfoot class="table-dark">
                 <tr>
@@ -120,9 +196,11 @@
         </table>
     </div>
 
-    <button class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#clearCartConfirmModal">
-        <i class="bi bi-x-circle"></i> Clear Cart
-    </button>
+    <div class="clear-cart-container">
+        <button class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#clearCartConfirmModal">
+            <i class="bi bi-x-circle"></i> Clear Cart
+        </button>
+    </div>
 
     @endif
 </div>
