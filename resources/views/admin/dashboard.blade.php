@@ -126,6 +126,9 @@
                 </div>
             </div>
 
+            <div id="printSection">
+
+
             <!-- Daily Sales Detail Table -->
             <div class="row mt-4" id="dailySalesDetailRow">
                 <div class="col-12">
@@ -209,6 +212,7 @@
 
             <!-- Tables Row -->
             <div class="row mt-4">
+
                 <!-- Low Stock Table -->
                 <div class="col-md-6">
                     <div class="card h-100">
@@ -324,11 +328,62 @@
                     </div>
                 </div>
             </div>
+            
+<!-- Print Button -->
+<div class="row mt-3 mb-4" id="printButtonContainer"> 
+    <div class="col-12 text-center pb-3">
+        <button class="btn btn-success" onclick="printSelectedSections()">
+            <i class="fas fa-print"></i> Print
+        </button>
+    </div>
+</div>
+
+<!-- Inline CSS to hide button when printing -->
+<style>
+@media print {
+    #printButtonContainer {
+        display: none !important;
+    }
+}
+</style>
+
+
+            </div>
         </div>
     </section>
     <!-- NAVBAR -->
     <!-- MAIN -->
     
+<script>
+function printSelectedSections() {
+    const printContents = document.getElementById("printSection").innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    const printWindow = window.open("", "", "height=600,width=800");
+    printWindow.document.write(`
+        <html>
+            <head>
+                <title>Print</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                <style>
+                    body { padding: 20px; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { border: 1px solid #dee2e6; padding: 8px; }
+                </style>
+            </head>
+            <body>
+                ${printContents}
+            </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+    printWindow.close();
+}
+</script>
+
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
